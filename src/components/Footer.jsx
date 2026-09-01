@@ -122,6 +122,28 @@ export default function Footer() {
 
     useGSAP(
         () => {
+            const isMobile = window.matchMedia("(max-width: 767px)").matches;
+
+            if (isMobile) {
+                gsap.fromTo(
+                    "[data-footer-cta-content] [data-reveal]",
+                    { y: 20, opacity: 0 },
+                    {
+                        y: 0,
+                        opacity: 1,
+                        duration: 0.55,
+                        stagger: 0.08,
+                        ease: "power2.out",
+                        scrollTrigger: {
+                            trigger: "[data-footer-cta]",
+                            start: "top 88%",
+                            once: true,
+                        },
+                    }
+                );
+                return;
+            }
+
             const timeline = gsap.timeline({
                 scrollTrigger: {
                     trigger: "[data-footer-cta]",

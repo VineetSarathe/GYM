@@ -266,6 +266,9 @@ function ProjectsCoverflow({ projects }) {
     }, [N]);
 
     useEffect(() => {
+        const isMobile = window.matchMedia("(max-width: 767px)").matches;
+        if (isMobile) return;
+
         autoScrollRef.current = setInterval(() => {
             if (draggingRef.current || isHoveredRef.current) return;
 
@@ -348,6 +351,7 @@ function ProjectsCoverflow({ projects }) {
     };
 
     const handleWheel = (e) => {
+        if (window.matchMedia("(max-width: 767px)").matches) return;
         e.preventDefault();
         setCardTransitions(false);
         positionRef.current += (e.deltaY + e.deltaX) * 0.0025;
@@ -1253,6 +1257,19 @@ export default function Home() {
             }
 
             const stackSections = gsap.utils.toArray("[data-sticky-stack]");
+            const isMobile = window.matchMedia("(max-width: 767px)").matches;
+
+            ScrollTrigger.config({ ignoreMobileResize: true });
+
+            const media = heroRef.current?.querySelector("[data-hero-media]");
+            if (isMobile && media) {
+                media.preload = "metadata";
+                const freezeHeroVideo = () => {
+                    media.pause();
+                };
+                if (media.readyState >= 2) freezeHeroVideo();
+                else media.addEventListener("loadeddata", freezeHeroVideo, { once: true });
+            }
 
             // A section taller than the viewport receives a negative sticky offset so all
             // of its content scrolls past natively before its bottom pins for the next card.
@@ -1263,79 +1280,84 @@ export default function Home() {
                 });
             };
 
-            updateStickyOffsets();
-            ScrollTrigger.addEventListener("refreshInit", updateStickyOffsets);
+            if (!isMobile) {
+                updateStickyOffsets();
+                ScrollTrigger.addEventListener("refreshInit", updateStickyOffsets);
 
-            // As each panel enters, its text resolves smoothly from soft focus to sharp.
-            // DOM order plus stagger makes the focus travel naturally from top to bottom.
-            stackSections.slice(1).forEach((section) => {
-                const entranceTrigger =
-                    section.querySelector("[data-reveal-group]") ?? section;
-                const textItems = entranceTrigger.querySelectorAll(
-                    "h2, h3, p, a, button"
-                );
+                // As each panel enters, its text resolves smoothly from soft focus to sharp.
+                // DOM order plus stagger makes the focus travel naturally from top to bottom.
+                stackSections.slice(1).forEach((section) => {
+                    const entranceTrigger =
+                        section.querySelector("[data-reveal-group]") ?? section;
+                    const textItems = entranceTrigger.querySelectorAll(
+                        "h2, h3, p, a, button"
+                    );
 
-                gsap.set(textItems, { willChange: "filter" });
+                    gsap.set(textItems, { willChange: "filter" });
 
-                gsap.fromTo(
-                    textItems,
-                    {
-                        filter: "blur(4px)",
-                    },
-                    {
-                        filter: "blur(0px)",
-                        stagger: 0.025,
-                        ease: "none",
-                        immediateRender: true,
-                        scrollTrigger: {
-                            trigger: entranceTrigger,
-                            start: "top 90%",
-                            end: "top 28%",
-                            scrub: 1.2,
+                    gsap.fromTo(
+                        textItems,
+                        {
+                            filter: "blur(4px)",
                         },
-                    }
-                );
-            });
+                        {
+                            filter: "blur(0px)",
+                            stagger: 0.025,
+                            ease: "none",
+                            immediateRender: true,
+                            scrollTrigger: {
+                                trigger: entranceTrigger,
+                                start: "top 90%",
+                                end: "top 28%",
+                                scrub: 1.2,
+                            },
+                        }
+                    );
+                });
+            }
 
             if (prefersReduced) {
                 return () => {
-                    ScrollTrigger.removeEventListener("refreshInit", updateStickyOffsets);
+                    if (!isMobile) {
+                        ScrollTrigger.removeEventListener("refreshInit", updateStickyOffsets);
+                    }
                 };
             }
 
             // Sticky-stack polish: native scrolling positions each section while
             // ScrollTrigger only scrubs the outgoing card's scale/shadow.
-            stackSections.forEach((section) => {
-                gsap.to(section, {
-                    scale: 0.97,
-                    boxShadow: "0 24px 70px rgba(0, 0, 0, 0.38)",
-                    transformOrigin: "top center",
-                    ease: "none",
-                    scrollTrigger: {
-                        trigger: section,
-                        start: "top top",
-                        end: "bottom top",
-                        scrub: true,
-                    },
-                });
-            });
-
-            const media = heroRef.current?.querySelector("[data-hero-media]");
-            if (media) {
-                gsap.fromTo(
-                    media,
-                    { scale: 1.08 },
-                    {
-                        scale: 1,
+            if (!isMobile) {
+                stackSections.forEach((section) => {
+                    gsap.to(section, {
+                        scale: 0.97,
+                        boxShadow: "0 24px 70px rgba(0, 0, 0, 0.38)",
+                        transformOrigin: "top center",
                         ease: "none",
                         scrollTrigger: {
-                            trigger: heroRef.current,
+                            trigger: section,
                             start: "top top",
                             end: "bottom top",
                             scrub: true,
                         },
-                    }
-                );
+                    });
+                });
+
+                if (media) {
+                    gsap.fromTo(
+                        media,
+                        { scale: 1.08 },
+                        {
+                            scale: 1,
+                            ease: "none",
+                            scrollTrigger: {
+                                trigger: heroRef.current,
+                                start: "top top",
+                                end: "bottom top",
+                                scrub: true,
+                            },
+                        }
+                    );
+                }
             }
 
             gsap.utils.toArray("[data-reveal-group]").forEach((group) => {
@@ -1355,6 +1377,7 @@ export default function Home() {
             });
 
             gsap.utils.toArray("[data-parallax-img]").forEach((img) => {
+                if (isMobile) return;
                 gsap.fromTo(
                     img,
                     { scale: 1.08 },
@@ -1372,7 +1395,9 @@ export default function Home() {
             });
 
             return () => {
-                ScrollTrigger.removeEventListener("refreshInit", updateStickyOffsets);
+                if (!isMobile) {
+                    ScrollTrigger.removeEventListener("refreshInit", updateStickyOffsets);
+                }
                 document.body.style.overflow = previousBodyOverflow;
             };
         },
@@ -1514,33 +1539,33 @@ export default function Home() {
                             {/* Stats row */}
                             <div
                                 data-hero-cta
-                                className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-5"
+                                className="mt-10 grid grid-cols-2 gap-x-4 gap-y-5 sm:flex sm:flex-wrap sm:items-center sm:gap-x-8"
                             >
 
                                 {/* Projects */}
-                                <div className="flex items-center gap-3">
-                                    <span className="font-display text-3xl text-[#E0C15A]">
+                                <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
+                                    <span className="font-display shrink-0 text-3xl text-[#E0C15A]">
                                         15+
                                     </span>
 
-                                    <span className="font-mono text-[11px] uppercase leading-tight tracking-[0.1em] text-[#D0CEC8]">
+                                    <span className="font-mono text-[10px] uppercase leading-tight tracking-[0.1em] text-[#D0CEC8] sm:text-[11px]">
                                         Gym Projects
                                         <br />
                                         Designed
                                     </span>
                                 </div>
 
-                                <div className="h-8 w-px bg-[#F5F3EE]/15" />
+                                <div className="hidden h-8 w-px bg-[#F5F3EE]/15 sm:block" />
 
                                 {/* Location */}
-                                <div className="flex items-center gap-3">
+                                <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
                                     <MapPin
                                         size={20}
-                                        className="text-[#E0C15A]"
+                                        className="shrink-0 text-[#E0C15A]"
                                         strokeWidth={1.75}
                                     />
 
-                                    <span className="font-mono text-[11px] uppercase leading-tight tracking-[0.1em]">
+                                    <span className="font-mono text-[10px] uppercase leading-tight tracking-[0.1em] sm:text-[11px]">
                                         <span className="block text-[#F5F3EE]">
                                             India
                                         </span>
@@ -1551,34 +1576,34 @@ export default function Home() {
                                     </span>
                                 </div>
 
-                                <div className="h-8 w-px bg-[#F5F3EE]/15" />
+                                <div className="hidden h-8 w-px bg-[#F5F3EE]/15 sm:block" />
 
                                 {/* Fitness */}
-                                <div className="flex items-center gap-3">
+                                <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
                                     <Dumbbell
                                         size={20}
-                                        className="text-[#E0C15A]"
+                                        className="shrink-0 text-[#E0C15A]"
                                         strokeWidth={1.75}
                                     />
 
-                                    <span className="font-mono text-[11px] uppercase leading-tight tracking-[0.1em] text-[#D0CEC8]">
+                                    <span className="font-mono text-[10px] uppercase leading-tight tracking-[0.1em] text-[#D0CEC8] sm:text-[11px]">
                                         Fitness
                                         <br />
                                         Spaces
                                     </span>
                                 </div>
 
-                                <div className="h-8 w-px bg-[#F5F3EE]/15" />
+                                <div className="hidden h-8 w-px bg-[#F5F3EE]/15 sm:block" />
 
                                 {/* Wellness */}
-                                <div className="flex items-center gap-3">
+                                <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
                                     <Flower2
                                         size={20}
-                                        className="text-[#E0C15A]"
+                                        className="shrink-0 text-[#E0C15A]"
                                         strokeWidth={1.75}
                                     />
 
-                                    <span className="font-mono text-[11px] uppercase leading-tight tracking-[0.1em] text-[#D0CEC8]">
+                                    <span className="font-mono text-[10px] uppercase leading-tight tracking-[0.1em] text-[#D0CEC8] sm:text-[11px]">
                                         Wellness
                                         <br />
                                         Focused
@@ -1655,8 +1680,8 @@ export default function Home() {
             >
                 {/* Background animation */}
                 <div className="pointer-events-none absolute inset-0">
-                    <div className="absolute -left-40 top-0 h-96 w-96 rounded-full bg-[#E0C15A]/[0.06] blur-[120px]" />
-                    <div className="absolute right-[-150px] bottom-[-100px] h-96 w-96 rounded-full bg-[#8B9A7E]/[0.04] blur-[130px]" />
+                    <div className="absolute -left-40 top-0 hidden h-96 w-96 rounded-full bg-[#E0C15A]/[0.06] blur-[120px] md:block" />
+                    <div className="absolute right-[-150px] bottom-[-100px] hidden h-96 w-96 rounded-full bg-[#8B9A7E]/[0.04] blur-[130px] md:block" />
 
                     <div
                         className="absolute inset-0 opacity-[0.025]"
@@ -1907,14 +1932,14 @@ export default function Home() {
                 {/* Ambient background */}
                 <div className="pointer-events-none absolute inset-0 overflow-hidden">
                     <div
-                        className="absolute -right-40 top-20 h-96 w-96 rounded-full bg-[#E0C15A]/[0.035] blur-3xl"
+                        className="absolute -right-40 top-20 hidden h-96 w-96 rounded-full bg-[#E0C15A]/[0.035] blur-3xl md:block"
                         style={{
                             animation: "experienceGlow 9s ease-in-out infinite",
                         }}
                     />
 
                     <div
-                        className="absolute left-1/4 bottom-0 h-72 w-72 rounded-full bg-[#E0C15A]/[0.025] blur-3xl"
+                        className="absolute left-1/4 bottom-0 hidden h-72 w-72 rounded-full bg-[#E0C15A]/[0.025] blur-3xl md:block"
                         style={{
                             animation: "experienceGlowReverse 11s ease-in-out infinite",
                         }}

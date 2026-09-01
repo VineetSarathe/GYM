@@ -49,6 +49,24 @@ export default function Contact() {
             const section = rootRef.current?.querySelector("[data-contact-section]");
             if (!section) return;
 
+            const isMobile = window.matchMedia("(max-width: 767px)").matches;
+
+            if (isMobile) {
+                gsap.fromTo(
+                    ["[data-contact-header] > *", "[data-contact-form]"],
+                    { y: 24, opacity: 0 },
+                    {
+                        y: 0,
+                        opacity: 1,
+                        duration: 0.55,
+                        stagger: 0.08,
+                        ease: "power2.out",
+                        scrollTrigger: { trigger: section, start: "top 88%", once: true },
+                    }
+                );
+                return;
+            }
+
             const timeline = gsap.timeline({
                 scrollTrigger: {
                     trigger: section,
@@ -220,9 +238,9 @@ export default function Contact() {
                 {/* ================= BACKGROUND ================= */}
 
                 <div className="pointer-events-none absolute inset-0">
-                    <div className="absolute left-[-180px] top-20 h-[420px] w-[420px] rounded-full bg-[#E0C15A]/[0.035] blur-[100px]" />
+                    <div className="absolute left-[-180px] top-20 hidden h-[420px] w-[420px] rounded-full bg-[#E0C15A]/[0.035] blur-[100px] md:block" />
 
-                    <div className="absolute bottom-[-180px] right-[-150px] h-[450px] w-[450px] rounded-full bg-[#E0C15A]/[0.025] blur-[110px]" />
+                    <div className="absolute bottom-[-180px] right-[-150px] hidden h-[450px] w-[450px] rounded-full bg-[#E0C15A]/[0.025] blur-[110px] md:block" />
 
                     <div className="absolute left-1/2 top-0 h-px w-[70%] -translate-x-1/2 bg-gradient-to-r from-transparent via-[#E0C15A]/25 to-transparent" />
                 </div>

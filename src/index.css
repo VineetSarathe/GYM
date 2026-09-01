@@ -77,6 +77,19 @@ body {
   }
 } */
 
+@media (max-width: 767px) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  [data-sticky-stack] {
+    position: relative !important;
+    top: auto !important;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+}
+
 .marquee-track {
     display: flex;
     width: max-content;
