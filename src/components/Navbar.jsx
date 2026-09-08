@@ -6,10 +6,10 @@ import Logo from "./Logo";
 // Per website strategy doc: "Top navigation: Logo | Projects | Services | About | Contact"
 const NAV_LINKS = [
     { label: "Projects", href: "#projects" },
-    { label: "Expertise", href: "#services" },
+    { label: "Expertise", href: "#approach" },
     { label: "Approach", href: "#approach" },
     { label: "About", href: "#about" },
-    { label: "Contact", href: "/contact" },
+    { label: "Contact", href: "#start-project" },
 ];
 
 // Injects the 3-role brand type system (display / editorial / body)

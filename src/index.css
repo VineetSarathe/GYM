@@ -1,4 +1,5 @@
-@import url("https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=Inter:wght@400;500;600;700;800;900&family=Montserrat:wght@400;600;700;800;900&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&family=Playfair+Display:ital,wght@1,500;1,600;1,700&display=swap");
+@import url("https://fonts.cdnfonts.com/css/canva-sans");
 
 @import "tailwindcss";
 
@@ -12,6 +13,18 @@ body {
   font-family: Manrope, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.font-canva,
+.font-canva input,
+.font-canva textarea,
+.font-canva button {
+  font-family: "Canva Sans", sans-serif;
+}
+
+.font-canva input::placeholder,
+.font-canva textarea::placeholder {
+  font-family: "Arial MT Pro", "Arial MT", Arial, sans-serif;
 }
 
 /* Visible, high-contrast focus ring for keyboard users on a dark theme */

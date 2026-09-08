@@ -1,12 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 
 import { PROJECTS } from "../data/projects";
-import designUnderline from "../assets/design-underline.png";
-
-import { ArrowRight, MapPin, Dumbbell, Flower2, ChevronDown, ArrowDown } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -44,43 +42,42 @@ const SPECIALIST_POINTS = [
 const APPROACH = [
     {
         title: "Understand",
-        copy: "The client, the users, the site, and what this gym has to do.",
+        copy: "Understand your people, goals and opportunities.",
+        image: "https://images.unsplash.com/photo-1517842645767-c639042777db?auto=format&fit=crop&w=700&q=80",
+        alt: "Notebook with handwritten notes",
+        overlay: { lines: ["People", "Spaces", "Possibilities"], script: true },
     },
     {
         title: "Research",
-        copy: "Equipment, operations, constraints, and how the floor will be used.",
+        copy: "Study global trends, user behaviour and spatial possibilities.",
+        image: "https://images.unsplash.com/photo-1615529182904-14819c35db37?auto=format&fit=crop&w=700&q=80",
+        alt: "Material and finish samples",
     },
     {
         title: "Plan",
-        copy: "Zoning, circulation, capacity — the decisions style cannot fix later.",
+        copy: "Create a clear spatial and functional strategy.",
+        image: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=700&q=80",
+        alt: "Architectural floor plan",
     },
     {
         title: "Design",
-        copy: "Materials, light, and identity after the room already works.",
+        copy: "Bring the vision to life with purposeful, aesthetic design.",
+        image: "https://images.unsplash.com/photo-1593079831268-3381b0db4a77?auto=format&fit=crop&w=700&q=80",
+        alt: "Gym interior with linear lighting",
     },
     {
         title: "Build",
-        copy: "Drawings and site coordination that protect the plan.",
+        copy: "Oversee execution with precision and attention to detail.",
+        image: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&w=700&q=80",
+        alt: "Dumbbell close-up",
+        overlay: { lines: ["STRONGER", "SPACES"], script: false },
     },
     {
         title: "Learn",
-        copy: "What the finished gym teaches. That goes into the next one.",
-    },
-];
-
-// Per Website Strategy doc: "SERVICES: Design, Consultancy, Products"
-const SERVICES = [
-    {
-        title: "Design",
-        copy: "Full interior design for gyms, fitness studios, and wellness spaces — from concept to finished room.",
-    },
-    {
-        title: "Consultancy",
-        copy: "Planning guidance for owners who need the functional decisions right before design even starts.",
-    },
-    {
-        title: "Products",
-        copy: "Sourcing and specification for equipment-adjacent finishes, flooring, and fit-out materials.",
+        copy: "Measure, refine and evolve for long-term impact.",
+        image: "https://images.unsplash.com/photo-1571902943202-507ec2618e8f?auto=format&fit=crop&w=700&q=80",
+        alt: "Training space wall",
+        overlay: { lines: ["BETTER PEOPLE", "STRONGER BUSINESSES"], script: false },
     },
 ];
 
@@ -90,23 +87,39 @@ const SERVICES = [
 const TESTIMONIALS = [
     {
         quote:
-            "She asked about our peak-hour headcount before she asked about finishes. That's when I knew the layout would actually hold up.",
+            "She asked about our peak-hour\nheadcount before she asked about finishes.\nThat's when I knew the layout would actually\nhold up.",
         name: "First-time gym owner",
-        detail: "New gym · 3,200 sq ft",
+        detail: "New gym 3,200 sq ft",
+        image: "https://images.unsplash.com/photo-1576678927484-cc907957088c?auto=format&fit=crop&w=900&q=80",
+        alt: "Free weights and dumbbells on a gym floor",
     },
     {
         quote:
             "Circulation and equipment placement were solved before a single material was chosen. Nothing felt like an afterthought.",
         name: "Fitness studio founder",
         detail: "Studio renovation",
+        image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=900&q=80",
+        alt: "Rows of cardio machines on a gym floor",
     },
     {
         quote:
             "Every gym owner in our group has since asked who designed our space.",
         name: "Referral client",
         detail: "Word of mouth · repeat enquiry",
+        image: "https://images.unsplash.com/photo-1570829460005-cba455b4c2e7?auto=format&fit=crop&w=900&q=80",
+        alt: "Training floor with equipment rows",
     },
 ];
+
+const TESTIMONIAL_STATS = [
+    { value: "50+", line1: "Projects", line2: "Delivered" },
+    { value: "2x", line1: "Business Growth", line2: "for Clients" },
+    { value: "100%", line1: "Function-First", line2: "Design Approach" },
+];
+
+const TESTIMONIAL_BG =
+    "https://images.unsplash.com/photo-1593079831268-3381b0db4a77?auto=format&fit=crop&w=2400&q=80";
+const TESTIMONIAL_ACCENT = "#A75D41";
 
 const INSIGHTS = [
     {
@@ -136,13 +149,39 @@ const MARQUEE_WORDS = [
     "PERFORMANCE",
 ];
 
+const WHY_GYM_CARDS = [
+    {
+        title: "Equipment Logic",
+        copy: "Racks, machines and free weights are placed for how they are used.",
+        image: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&w=800&q=80",
+        alt: "Dumbbell close-up on a gym floor",
+    },
+    {
+        title: "Circulation",
+        copy: "Every piece of equipment has a purpose and a relationship to the space.",
+        image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=800&q=80",
+        alt: "Gym floor with equipment aisles",
+    },
+    {
+        title: "Durability",
+        copy: "Flooring, tiles and finishes have to survive sweat, impact and daily traffic.",
+        image: "https://images.unsplash.com/photo-1540497077202-7c8a3999166f?auto=format&fit=crop&w=800&q=80",
+        alt: "Gym flooring with directional markings",
+    },
+    {
+        title: "Business Thinking",
+        copy: "The plan has to work for the business — capacity, staffing and how the room earns.",
+        image: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=800&q=80",
+        alt: "Dark textured gym flooring",
+    },
+];
+
 // Words for the page-load intro. Keep in sync with the hero heading below.
 const INTRO_WORDS = [
-    { text: "Where", gold: false },
-    { text: "gyms", gold: false },
-    { text: "meet", gold: false },
-    { text: "good", gold: false },
-    { text: "design.", gold: true },
+    { text: "Gyms,", gold: false },
+    { text: "designed", gold: false },
+    { text: "to", gold: false },
+    { text: "perform.", gold: false },
 ];
 
 function Label({ children }) {
@@ -466,6 +505,251 @@ function ProjectsCoverflow({ projects }) {
     );
 }
 
+
+const EDGE_CARD_H = 90;
+const EDGE_CARD_GAP = 10;
+const EDGE_VISIBLE = 4;
+const EDGE_VIEWPORT_H = EDGE_VISIBLE * EDGE_CARD_H + (EDGE_VISIBLE - 1) * EDGE_CARD_GAP;
+
+function projectAt(list, start, i) {
+    if (!list.length) return null;
+    const n = list.length;
+    return list[(((start + i) % n) + n) % n];
+}
+
+function EdgeBleedProjectsColumn({ projects }) {
+    const N = projects.length;
+    const viewportRef = useRef(null);
+    const colRefs = useRef([]);
+    const positionRef = useRef(0);
+    const draggingRef = useRef(false);
+    const axisRef = useRef(null);
+    const didDragRef = useRef(false);
+    const pointerStartRef = useRef({ x: 0, y: 0 });
+    const startPosRef = useRef(0);
+    const tweenRef = useRef(null);
+    const wheelTimeoutRef = useRef(null);
+
+    const apply = () => {
+        const pos = positionRef.current;
+        const stageW = viewportRef.current?.clientWidth || 720;
+        const isMobile = stageW < 640;
+        const spacing = isMobile
+            ? Math.max(118, stageW * 0.3)
+            : Math.min(210, Math.max(170, stageW * 0.26));
+
+        colRefs.current.forEach((el, i) => {
+            if (!el) return;
+            let d = i - pos;
+            while (d > N / 2) d -= N;
+            while (d < -N / 2) d += N;
+
+            const abs = Math.abs(d);
+            const rotateY = Math.max(-32, Math.min(32, -d * 28));
+            const translateX = d * spacing;
+            // Center sits back; sides come forward (underside / behind).
+            const translateZ = -150 + abs * 175;
+            const translateY = abs * 18;
+            const rotateX = 10 - abs * 6;
+            const scale = Math.max(0.78, 0.9 + abs * 0.04);
+            const opacity =
+                abs >= 2.2 ? 0 : abs <= 1 ? 1 - 0.32 * abs : Math.max(0, 0.68 * (1 - (abs - 1) / 1.2));
+
+            el.style.transform = `translate3d(-50%, ${translateY}px, 0) translate3d(${translateX}px, 0, ${translateZ}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(${scale})`;
+            el.style.opacity = opacity;
+            el.style.zIndex = String(Math.round(abs * 14));
+            el.style.filter = abs < 0.25 ? `brightness(0.82)` : abs > 0.9 ? `brightness(${Math.max(0.7, 1 - abs * 0.08)})` : "none";
+            el.style.pointerEvents = abs <= 0.55 ? "auto" : "none";
+            el.style.visibility = abs >= 2.25 ? "hidden" : "visible";
+        });
+    };
+
+    const killTween = () => {
+        tweenRef.current?.kill();
+        tweenRef.current = null;
+    };
+
+    const snapTo = (index) => {
+        killTween();
+        const proxy = { value: positionRef.current };
+        tweenRef.current = gsap.to(proxy, {
+            value: index,
+            duration: 0.7,
+            ease: "power3.out",
+            onUpdate: () => {
+                positionRef.current = proxy.value;
+                apply();
+            },
+            onComplete: () => {
+                positionRef.current = index;
+                apply();
+                tweenRef.current = null;
+            },
+        });
+    };
+
+    useLayoutEffect(() => {
+        apply();
+        return () => {
+            killTween();
+            clearTimeout(wheelTimeoutRef.current);
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [N]);
+
+    useEffect(() => {
+        const el = viewportRef.current;
+        if (!el) return;
+
+        const onWheel = (e) => {
+            if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
+            if (Math.abs(e.deltaX) < 6) return;
+            e.preventDefault();
+            killTween();
+            positionRef.current += e.deltaX * 0.0045;
+            apply();
+            clearTimeout(wheelTimeoutRef.current);
+            wheelTimeoutRef.current = setTimeout(() => {
+                snapTo(Math.round(positionRef.current));
+            }, 120);
+        };
+
+        el.addEventListener("wheel", onWheel, { passive: false });
+        return () => el.removeEventListener("wheel", onWheel);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [N]);
+
+    const handlePointerDown = (e) => {
+        if (e.pointerType === "mouse" && e.button !== 0) return;
+        draggingRef.current = true;
+        axisRef.current = null;
+        didDragRef.current = false;
+        pointerStartRef.current = { x: e.clientX, y: e.clientY };
+        startPosRef.current = positionRef.current;
+        e.currentTarget.style.cursor = "grabbing";
+    };
+
+    const handlePointerMove = (e) => {
+        if (!draggingRef.current) return;
+        const dx = e.clientX - pointerStartRef.current.x;
+        const dy = e.clientY - pointerStartRef.current.y;
+
+        if (!axisRef.current) {
+            if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+            axisRef.current = Math.abs(dx) >= Math.abs(dy) ? "x" : "y";
+            if (axisRef.current === "x") {
+                killTween();
+                e.currentTarget.setPointerCapture(e.pointerId);
+            }
+        }
+
+        if (axisRef.current !== "x") return;
+
+        e.preventDefault();
+        if (Math.abs(dx) > 6) didDragRef.current = true;
+        positionRef.current = startPosRef.current - dx / 170;
+        apply();
+    };
+
+    const handlePointerUp = (e) => {
+        if (!draggingRef.current) return;
+        draggingRef.current = false;
+        axisRef.current = null;
+        e.currentTarget.style.cursor = "grab";
+        snapTo(Math.round(positionRef.current));
+    };
+
+    const handleClickCapture = (e) => {
+        if (!didDragRef.current) return;
+        e.preventDefault();
+        e.stopPropagation();
+        didDragRef.current = false;
+    };
+
+    const renderCard = (project, row, dim) => {
+        if (!project) return null;
+        const isWellness = project.category === "Wellness";
+        const back = EDGE_VISIBLE - 1 - row;
+        return (
+            <a
+                key={project.id}
+                href={project.href}
+                tabIndex={dim ? -1 : undefined}
+                className="group relative block h-[90px] w-full shrink-0 overflow-hidden rounded-md border border-[#F5F3EE]/[0.08] bg-[#0D0D0D] shadow-[0_10px_26px_rgba(0,0,0,0.5)]"
+                style={{
+                    transform: `translateZ(${-back * 38}px) scale(${1 - back * 0.04})`,
+                    zIndex: row,
+                }}
+            >
+                <div className="relative h-full overflow-hidden">
+                    <img
+                        src={project.image}
+                        alt={dim ? "" : project.alt}
+                        className="h-full w-full object-cover"
+                        draggable={false}
+                        loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-black/10" />
+                    {!dim && (
+                        <div className="absolute left-2 top-2 font-mono text-[8px] tracking-[0.16em] text-[#E0C15A]">
+                            {project.id}
+                        </div>
+                    )}
+                    {isWellness && !dim && (
+                        <span className="absolute right-2 top-2 rounded-sm border border-[#8B9A7E]/40 bg-[#8B9A7E]/15 px-1.5 py-0.5 text-[6px] font-bold uppercase tracking-[0.1em] text-[#8B9A7E]">
+                            Wellness
+                        </span>
+                    )}
+                    <div className="absolute bottom-2 left-2 right-2">
+                        <h3 className={`font-display uppercase leading-none tracking-wide text-[#F5F3EE] ${dim ? "text-[9px]" : "text-[11px]"}`}>
+                            {project.name}
+                        </h3>
+                    </div>
+                </div>
+            </a>
+        );
+    };
+
+    const slots = Array.from({ length: EDGE_VISIBLE }, (_, i) => i);
+
+    return (
+        <div
+            ref={viewportRef}
+            data-reveal
+            className="relative mx-auto w-full max-w-[792px] cursor-grab px-[36px] select-none"
+            style={{ touchAction: "pan-y" }}
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={handlePointerUp}
+            onPointerCancel={handlePointerUp}
+            onClickCapture={handleClickCapture}
+            aria-label="Project cards, drag left or right"
+        >
+            <div
+                className="relative w-full"
+                style={{
+                    height: EDGE_VIEWPORT_H,
+                    perspective: "1200px",
+                    perspectiveOrigin: "50% 88%",
+                }}
+            >
+                {projects.map((_, colIndex) => (
+                    <div
+                        key={projects[colIndex].id}
+                        ref={(el) => {
+                            colRefs.current[colIndex] = el;
+                        }}
+                        className="absolute left-1/2 top-0 flex w-[124px] flex-col gap-[10px] will-change-transform sm:w-[160px] md:w-[190px]"
+                        style={{ transformStyle: "preserve-3d", transformOrigin: "center center" }}
+                    >
+                        {slots.map((row) => renderCard(projectAt(projects, colIndex, row), row, false))}
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
+
 function Marquee({ words }) {
     const content = words.join("   ·   ") + "   ·   ";
 
@@ -483,6 +767,135 @@ function Marquee({ words }) {
                     {content}
                 </div>
             </div>
+        </div>
+    );
+}
+
+function GymFloorPlan() {
+    return (
+        <div className="relative aspect-[16/10] w-full overflow-hidden bg-[#121212]">
+            <img
+                src="https://images.unsplash.com/photo-1593079831268-3381b0db4a77?auto=format&fit=crop&w=1400&q=80"
+                alt="Gym floor plan showing strength zones and circulation"
+                className="absolute inset-0 h-full w-full object-cover brightness-[0.38] contrast-[1.15] saturate-[0.7]"
+            />
+            <div className="absolute inset-0 bg-[#0A0A0A]/62" />
+            <div
+                className="absolute inset-0 opacity-[0.12]"
+                style={{
+                    backgroundImage:
+                        "linear-gradient(rgba(255,255,255,0.35) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.35) 1px, transparent 1px)",
+                    backgroundSize: "36px 36px",
+                }}
+            />
+            <svg
+                viewBox="0 0 800 500"
+                className="absolute inset-0 h-full w-full"
+                preserveAspectRatio="xMidYMid slice"
+                aria-hidden="true"
+            >
+                <rect x="48" y="70" width="210" height="150" fill="none" stroke="rgba(255,255,255,0.22)" strokeWidth="1.2" />
+                <rect x="62" y="88" width="78" height="18" fill="rgba(255,255,255,0.08)" />
+                <rect x="154" y="88" width="78" height="18" fill="rgba(255,255,255,0.08)" />
+                <rect x="62" y="118" width="78" height="18" fill="rgba(255,255,255,0.08)" />
+                <rect x="154" y="118" width="78" height="18" fill="rgba(255,255,255,0.08)" />
+                <rect x="62" y="148" width="78" height="18" fill="rgba(255,255,255,0.08)" />
+                <rect x="154" y="148" width="78" height="18" fill="rgba(255,255,255,0.08)" />
+                <rect x="62" y="178" width="170" height="22" fill="rgba(163,104,77,0.18)" stroke="#A3684D" strokeWidth="0.8" />
+
+                <rect x="300" y="80" width="170" height="110" fill="none" stroke="rgba(255,255,255,0.16)" strokeWidth="1" />
+                <circle cx="340" cy="120" r="14" fill="none" stroke="rgba(255,255,255,0.2)" />
+                <circle cx="385" cy="120" r="14" fill="none" stroke="rgba(255,255,255,0.2)" />
+                <circle cx="430" cy="120" r="14" fill="none" stroke="rgba(255,255,255,0.2)" />
+                <rect x="318" y="150" width="134" height="22" fill="rgba(255,255,255,0.07)" />
+
+                <path
+                    d="M 90 260 C 180 250, 260 280, 360 270 C 470 258, 560 300, 680 250 C 720 232, 740 200, 710 160"
+                    fill="none"
+                    stroke="#C47A52"
+                    strokeWidth="2.4"
+                    strokeDasharray="10 8"
+                    strokeLinecap="round"
+                />
+                <path
+                    d="M 160 360 C 280 330, 420 390, 560 340 C 640 318, 700 360, 740 320"
+                    fill="none"
+                    stroke="#C47A52"
+                    strokeWidth="2.2"
+                    strokeDasharray="10 8"
+                    strokeLinecap="round"
+                />
+                <polygon points="708,148 732,168 700,174" fill="#C47A52" />
+                <polygon points="748,306 738,332 722,310" fill="#C47A52" />
+
+                <text x="62" y="58" fill="#C47A52" fontSize="13" letterSpacing="3.2" fontFamily="Canva Sans, sans-serif" fontWeight="700">
+                    STRENGTH ZONE
+                </text>
+                <text x="520" y="228" fill="#FFFFFF" fontSize="12" letterSpacing="3.4" fontFamily="Canva Sans, sans-serif" fontWeight="600">
+                    CIRCULATION
+                </text>
+            </svg>
+        </div>
+    );
+}
+
+function WhyGymCards() {
+    const [active, setActive] = useState(1);
+
+    return (
+        <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:mt-14 lg:grid-cols-4 lg:gap-5">
+            {WHY_GYM_CARDS.map((card, index) => {
+                const isActive = active === index;
+                return (
+                    <article
+                        key={card.title}
+                        onMouseEnter={() => setActive(index)}
+                        className={`group relative aspect-[3/4] cursor-pointer overflow-hidden rounded-[14px] border transition-colors duration-300 ${
+                            isActive ? "border-[#C4A06A]/75 bg-[#1A1A1A]" : "border-transparent bg-[#1A1A1A]"
+                        }`}
+                    >
+                        <img
+                            src={card.image}
+                            alt={card.alt}
+                            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${
+                                isActive ? "opacity-0" : "opacity-100"
+                            }`}
+                        />
+                        <div
+                            className={`absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent transition-opacity duration-300 ${
+                                isActive ? "opacity-0" : "opacity-100"
+                            }`}
+                        />
+
+                        <div
+                            className={`absolute left-5 z-[1] transition-all duration-300 ${
+                                isActive ? "top-5" : "bottom-5"
+                            }`}
+                        >
+                            <p className="font-canva text-[12px] font-medium tracking-[0.16em] text-white lg:text-[13px]">
+                                {String(index + 1).padStart(2, "0")}
+                            </p>
+                            <h3 className="mt-1 font-canva text-[13px] font-bold uppercase tracking-[0.16em] text-white lg:text-[14px]">
+                                {card.title}
+                            </h3>
+                        </div>
+
+                        <div
+                            className={`absolute inset-0 flex flex-col p-5 pt-[4.75rem] transition-opacity duration-300 ${
+                                isActive ? "opacity-100" : "pointer-events-none opacity-0"
+                            }`}
+                        >
+                            <span className="mt-[18%] h-px w-10 bg-[#C4A06A]" />
+                            <p className="mt-auto max-w-[88%] pb-14 font-canva text-[13px] leading-[1.55] text-white">
+                                {card.copy}
+                            </p>
+                            <span className="absolute bottom-5 right-5 inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/85 text-white">
+                                <ArrowRight className="h-4 w-4" strokeWidth={1.8} />
+                            </span>
+                        </div>
+                    </article>
+                );
+            })}
         </div>
     );
 }
@@ -635,6 +1048,35 @@ function InsightsList({ points }) {
     );
 }
 
+function ApproachStepPhoto({ step }) {
+    return (
+        <div className="relative aspect-square overflow-hidden bg-[#161616]">
+            <img
+                src={step.image}
+                alt={step.alt}
+                className="h-full w-full object-cover brightness-[0.72] contrast-[1.08] saturate-[0.85]"
+                loading="lazy"
+            />
+            {step.overlay ? (
+                <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/55 to-transparent px-2.5 pb-3">
+                    {step.overlay.lines.map((line) => (
+                        <span
+                            key={line}
+                            className={
+                                step.overlay.script
+                                    ? "font-canva text-[13px] leading-[1.15] text-white lg:text-[15px]"
+                                    : "font-canva text-[8px] font-bold uppercase leading-[1.2] tracking-[0.08em] text-white lg:text-[9px]"
+                            }
+                        >
+                            {line}
+                        </span>
+                    ))}
+                </div>
+            ) : null}
+        </div>
+    );
+}
+
 function WavyProcessRow({ steps }) {
     const trackRef = useRef(null);
     const travelerRef = useRef(null);
@@ -643,17 +1085,22 @@ function WavyProcessRow({ steps }) {
     const labelRefs = useRef([]);
     const ringRefs = useRef([]);
 
-    const GOLD = "#E0C15A";
-    const BG = "#0A0A0A";
+    const GOLD = "#A75D41";
+    const COPPER = "#A75D41";
+    const BG = "#0E0E0E";
     const LINE = "#F5F3EE";
 
     const path =
-        "M 30 55 C 65 55, 65 75, 100 75 S 135 35, 170 35 S 205 85, 240 85 S 275 55, 310 55 S 345 75, 380 75 S 415 35, 450 35 S 485 85, 520 85 S 555 55, 590 55";
+        "M 100 42 C 170 18, 230 68, 300 28 C 370 8, 430 72, 500 46 C 570 22, 630 70, 700 30 C 770 10, 830 74, 900 52 C 970 30, 1030 58, 1100 38";
     const POINTS = [
-        { x: 30, y: 55 }, { x: 170, y: 35 }, { x: 310, y: 55 },
-        { x: 450, y: 35 }, { x: 520, y: 85 }, { x: 590, y: 55 },
+        { x: 100, y: 42 },
+        { x: 300, y: 28 },
+        { x: 500, y: 46 },
+        { x: 700, y: 30 },
+        { x: 900, y: 52 },
+        { x: 1100, y: 38 },
     ];
-    const stopFracs = [0, 170 / 620, 310 / 620, 450 / 620, 520 / 620, 1];
+    const stopFracs = [0, 0.2, 0.4, 0.6, 0.8, 1];
 
     useEffect(() => {
         const trackPath = trackRef.current;
@@ -669,7 +1116,12 @@ function WavyProcessRow({ steps }) {
         const duration = 7200;
 
         function resetVisuals() {
-            nodeRefs.current.forEach((el) => { if (el) { el.style.transition = "none"; el.style.fill = BG; } });
+            nodeRefs.current.forEach((el) => {
+                if (el) {
+                    el.style.transition = "none";
+                    el.style.fill = "#ffffff";
+                }
+            });
             labelRefs.current.forEach((el) => { if (el) { el.style.transition = "none"; el.style.fill = LINE; } });
             if (trailGroup) trailGroup.innerHTML = "";
             if (traveler) {
@@ -764,24 +1216,66 @@ function WavyProcessRow({ steps }) {
     }, [steps.length]);
 
     return (
-        <svg viewBox="-40 0 700 120" className="w-full">
-            <path d={path} fill="none" stroke="#F5F3EE1A" strokeWidth="1.5" />
-            <path ref={trackRef} d={path} fill="none" stroke="transparent" strokeWidth="1.5" />
-            {POINTS.map((p, i) => {
-                const isLast = i === POINTS.length - 1;
-                const baseR = isLast ? 8 : 6;
-                return (
-                    <g key={i}>
-                        <circle ref={(el) => (ringRefs.current[i] = el)} cx={p.x} cy={p.y} r={baseR} fill="none" stroke={GOLD} strokeWidth="1.5" opacity="0" />
-                        <circle ref={(el) => (nodeRefs.current[i] = el)} cx={p.x} cy={p.y} r={baseR} fill={BG} stroke={GOLD} strokeWidth="1.5" />
-                        <text x={p.x} y={p.y - baseR - 6} textAnchor="middle" fill="#666" fontSize="9" fontFamily="monospace">{String(i + 1).padStart(2, "0")}</text>
-                        <text ref={(el) => (labelRefs.current[i] = el)} x={p.x} y={p.y + baseR + 16} textAnchor="middle" fill={LINE} fontSize="11" fontWeight="600" letterSpacing="0.02em" style={{ textTransform: "uppercase" }}>{steps[i].title}</text>
-                    </g>
-                );
-            })}
-            <g ref={trailRef} />
-            <circle ref={travelerRef} cx={POINTS[0].x} cy={POINTS[0].y} r="4" fill="#e8c878" />
-        </svg>
+        <div className="relative">
+            <div className="relative h-[118px]">
+                {steps.map((step, i) => {
+                    const p = POINTS[i];
+                    const svgH = 78;
+                    const gap = 8;
+                    return (
+                        <div
+                            key={step.title}
+                            className="absolute z-[1] -translate-x-1/2 whitespace-nowrap text-center"
+                            style={{
+                                left: `${(p.x / 1200) * 100}%`,
+                                bottom: `${svgH - (p.y / 80) * svgH + gap}px`,
+                            }}
+                        >
+                            <p className="font-canva text-[13px] font-medium tracking-[0.08em] text-white lg:text-[15px]">
+                                {String(i + 1).padStart(2, "0")}
+                            </p>
+                            <h3 className="mt-0.5 font-canva text-[11px] font-bold uppercase tracking-[0.14em] text-white lg:text-[13px]">
+                                {step.title}
+                            </h3>
+                        </div>
+                    );
+                })}
+                <svg viewBox="0 0 1200 80" className="absolute bottom-0 left-0 h-[78px] w-full" preserveAspectRatio="none" aria-hidden="true">
+                    <path d={path} fill="none" stroke="#7a7a7a" strokeWidth="1.15" />
+                    <path ref={trackRef} d={path} fill="none" stroke="transparent" strokeWidth="1.15" />
+                    {POINTS.map((p, i) => {
+                        const isEnd = i === 0 || i === POINTS.length - 1;
+                        return (
+                            <g key={i}>
+                                <circle ref={(el) => (ringRefs.current[i] = el)} cx={p.x} cy={p.y} r="6.5" fill="none" stroke={COPPER} strokeWidth="1.4" opacity="0" />
+                                <circle
+                                    ref={(el) => (nodeRefs.current[i] = el)}
+                                    cx={p.x}
+                                    cy={p.y}
+                                    r="6.5"
+                                    fill="#ffffff"
+                                    stroke={isEnd ? COPPER : "none"}
+                                    strokeWidth={isEnd ? 2.2 : 0}
+                                />
+                            </g>
+                        );
+                    })}
+                    <g ref={trailRef} />
+                    <circle ref={travelerRef} cx={POINTS[0].x} cy={POINTS[0].y} r="4" fill="#c48a6a" />
+                </svg>
+            </div>
+
+            <div className="grid grid-cols-6">
+                {steps.map((step) => (
+                    <div key={step.title} className="border-r border-white/[0.08] px-2 last:border-r-0 lg:px-3">
+                        <ApproachStepPhoto step={step} />
+                        <p className="mt-3 max-w-[148px] font-['Arial_MT_Pro','Arial_MT',Arial,sans-serif] text-[9px] leading-[1.45] text-white lg:text-[10px]">
+                            {step.copy}
+                        </p>
+                    </div>
+                ))}
+            </div>
+        </div>
     );
 }
 
@@ -948,90 +1442,22 @@ function WavyProcessColumn({ steps }) {
     }, [steps.length]);
 
     return (
-        <svg
-            viewBox="0 0 330 620"
-            className="h-[620px] w-full"
-            preserveAspectRatio="xMidYMid meet"
-            aria-label="Our design process"
-        >
-            <path
-                d={path}
-                fill="none"
-                stroke="#F5F3EE1A"
-                strokeWidth="1.5"
-            />
-            <path
-                ref={trackRef}
-                d={path}
-                fill="none"
-                stroke="transparent"
-                strokeWidth="1.5"
-            />
-            {POINTS.map((point, index) => {
-                const isLast = index === POINTS.length - 1;
-                const baseR = isLast ? 8 : 6;
-                return (
-                    <g key={steps[index].title}>
-                        <circle
-                            ref={(element) =>
-                                (ringRefs.current[index] = element)
-                            }
-                            cx={point.x}
-                            cy={point.y}
-                            r={baseR}
-                            fill="none"
-                            stroke={GOLD}
-                            strokeWidth="1.5"
-                            opacity="0"
-                        />
-                        <circle
-                            ref={(element) =>
-                                (nodeRefs.current[index] = element)
-                            }
-                            cx={point.x}
-                            cy={point.y}
-                            r={baseR}
-                            fill={BG}
-                            stroke={GOLD}
-                            strokeWidth="1.5"
-                        />
-                        <text
-                            x={point.x}
-                            y={point.y - baseR - 13}
-                            textAnchor="middle"
-                            fill="#666"
-                            fontSize="9"
-                            fontFamily="monospace"
-                        >
-                            {String(index + 1).padStart(2, "0")}
-                        </text>
-                        <text
-                            ref={(element) =>
-                                (labelRefs.current[index] = element)
-                            }
-                            x={point.x}
-                            y={point.y + baseR + 24}
-                            textAnchor="middle"
-                            fill={LINE}
-                            fontSize="15"
-                            fontWeight="600"
-                            letterSpacing="0.02em"
-                            style={{ textTransform: "uppercase" }}
-                        >
-                            {steps[index].title}
-                        </text>
-                    </g>
-                );
-            })}
-            <g ref={trailRef} />
-            <circle
-                ref={travelerRef}
-                cx={POINTS[0].x}
-                cy={POINTS[0].y}
-                r="4"
-                fill="#e8c878"
-            />
-        </svg>
+        <div className="space-y-10">
+            {steps.map((step, index) => (
+                <div key={step.title}>
+                    <p className="font-canva text-[15px] font-medium tracking-[0.08em] text-white">{String(index + 1).padStart(2, "0")}</p>
+                    <h3 className="mt-1 font-canva text-sm font-bold uppercase tracking-[0.14em] text-white">
+                        {step.title}
+                    </h3>
+                    <div className="mt-4 max-w-[280px]">
+                        <ApproachStepPhoto step={step} />
+                    </div>
+                    <p className="mt-3 max-w-[280px] font-['Arial_MT_Pro','Arial_MT',Arial,sans-serif] text-[11px] leading-[1.5] text-white">
+                        {step.copy}
+                    </p>
+                </div>
+            ))}
+        </div>
     );
 }
 
@@ -1100,6 +1526,426 @@ function IntroPreloader() {
     );
 }
 
+const CASE_STUDY_STEPS = [
+    {
+        title: "The Challenge",
+        copy: "The existing space felt congested, with poor circulation between strength, cardio and functional training areas.",
+        rule: true,
+    },
+    {
+        title: "The Thinking",
+        copy: "We analysed member flow, equipment relationships and peak-hour usage to identify space and movement bottlenecks.",
+    },
+    {
+        title: "The Decisions",
+        copy: "We redesigned the layout, created distinct training zones and improved circulation paths for a smoother, more intuitive flow.",
+    },
+    {
+        title: "The Outcome",
+        copy: "A more efficient, open and motivating gym space that supports better workouts and a stronger member experience.",
+    },
+];
+
+function CaseStudySpotlight() {
+    return (
+        <section
+            data-sticky-stack
+            className="font-canva sticky top-0 z-[7] overflow-hidden py-16 pb-24 text-[#2A2A2A] md:py-24 md:pb-32"
+            style={{
+                fontFamily: '"Canva Sans", sans-serif',
+                background: "#f2ede7",
+            }}
+        >
+            <div className="mx-auto max-w-7xl px-6 md:px-10">
+                <div className="grid items-center gap-8 lg:grid-cols-[0.72fr_1.28fr] lg:gap-12">
+                    <div>
+                        <p className="font-canva text-[11px] font-medium uppercase tracking-[0.32em] text-[#727466] md:text-[12px]">
+                            Case study spotlight
+                        </p>
+                        <h2 className="mt-5 font-canva text-[clamp(2.2rem,5vw,3.75rem)] font-medium uppercase leading-[0.88] tracking-[-0.03em] text-[#727466]">
+                            Titan
+                            <br />
+                            Gym
+                        </h2>
+                        <p className="mt-5 font-canva text-[10px] font-medium uppercase tracking-[0.28em] text-[#000000] md:text-[11px]">
+                            Mumbai · 8,000 SQ FT · Gym interior design
+                        </p>
+                    </div>
+                    <div className="relative overflow-hidden rounded-[4px]">
+                        <img
+                            src="https://images.unsplash.com/photo-1593079831268-3381b0db4a77?auto=format&fit=crop&w=1600&q=80"
+                            alt="Titan Gym interior with cardio equipment and patterned wall"
+                            className="aspect-[16/7.2] h-full w-full object-cover"
+                        />
+                        <div className="pointer-events-none absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-[#E8A87C]/45 to-transparent" />
+                        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-[#E8A87C]/40 to-transparent" />
+                    </div>
+                </div>
+
+                <div className="relative mt-16 md:mt-[88px]">
+                    <div className="grid grid-cols-1 gap-12 md:grid-cols-4 md:gap-10">
+                        {CASE_STUDY_STEPS.map((step, index) => (
+                            <div key={step.title} className="relative flex flex-col">
+                                <div className="relative flex h-[34px] items-center">
+                                    <div className="relative z-[1] flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-full border border-[#727466] bg-[#f2ede7]">
+                                        <span className="font-canva text-[11px] font-medium text-[#727466]">
+                                            {String(index + 1).padStart(2, "0")}
+                                        </span>
+                                    </div>
+                                    {index < 3 ? (
+                                        <span
+                                            aria-hidden="true"
+                                            className="absolute left-[48px] right-[-26px] top-1/2 hidden h-px -translate-y-1/2 bg-[#727466]/40 md:block"
+                                        />
+                                    ) : null}
+                                </div>
+                                <h3 className="mt-7 font-canva text-[12px] font-bold uppercase tracking-[0.18em] text-[#727466]">
+                                    {step.title}
+                                </h3>
+                                <p className="mt-4 max-w-[250px] font-['Arial_MT_Pro','Arial_MT',Arial,sans-serif] text-[13px] font-normal leading-[1.7] text-[#000000]">
+                                    {step.copy}
+                                </p>
+                                {step.rule ? (
+                                    <span className="mt-6 block h-[2px] w-[220px] max-w-full bg-[#2A2A2A]/55" />
+                                ) : null}
+                            </div>
+                        ))}
+                    </div>
+
+                    <div className="mt-8 flex justify-end md:mt-10">
+                        <a
+                            href="#projects"
+                            className="inline-flex min-w-max shrink-0 items-center gap-3 whitespace-nowrap bg-[#6B6E5F] px-5 py-3.5 font-canva text-[10px] font-bold uppercase tracking-[0.14em] text-white transition-colors duration-300 hover:bg-[#5C5F52]"
+                        >
+                            See the full case study
+                            <span className="inline-block h-px w-6 shrink-0 bg-white" aria-hidden="true" />
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
+}
+
+const RISING_STAR_PHOTOS = [
+    {
+        src: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=500&q=80",
+        alt: "Young leader portrait",
+    },
+    {
+        src: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=500&q=80",
+        alt: "Professional portrait",
+    },
+    {
+        src: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=500&q=80",
+        alt: "Industry leader portrait",
+    },
+    {
+        src: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=500&q=80",
+        alt: "Designer portrait",
+    },
+];
+
+const AWARD_PHOTO =
+    "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=1000&q=80";
+
+function RecognitionSection() {
+    const [slide, setSlide] = useState(0);
+    const count = RISING_STAR_PHOTOS.length;
+    const visible = [0, 1, 2].map((offset) => RISING_STAR_PHOTOS[(slide + offset) % count]);
+
+    return (
+        <section
+            data-sticky-stack
+            className="font-canva sticky top-0 z-[8] overflow-hidden bg-[#f2ede7] py-16 text-[#1A1A1A] md:py-24 [&_*]:[font-family:'Canva_Sans',sans-serif]"
+            style={{ fontFamily: '"Canva Sans", sans-serif' }}
+        >
+            <div className="mx-auto max-w-7xl px-6 md:px-10">
+                <div className="text-center">
+                    <p className="font-canva text-[11px] font-medium uppercase tracking-[0.36em] text-[#2A2A2A] md:text-[12px]">
+                        Recognition
+                    </p>
+                    <h2 className="mt-4 font-canva text-[clamp(1.7rem,3.6vw,2.75rem)] font-semibold leading-[1.2] tracking-[-0.02em]">
+                        <span className="text-[#1A1A1A]">Trusted. Recognised. </span>
+                        <span style={{ color: "#A3684D" }}>Making an Impact</span>
+                    </h2>
+                </div>
+
+                <div className="mt-12 grid grid-cols-1 gap-5 md:mt-16 md:grid-cols-3 md:gap-6">
+                    <article className="overflow-hidden rounded-[10px] bg-[#E8E4DE]">
+                        <div className="relative aspect-[16/11] overflow-hidden bg-[#1A1A1A]">
+                            <img
+                                src={AWARD_PHOTO}
+                                alt="Architects Wow Awards 2024"
+                                className="h-full w-full object-cover brightness-[0.72]"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-r from-black/45 via-black/10 to-transparent" />
+                            <span className="absolute bottom-4 left-4 inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-white/80 text-white">
+                                <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.8} />
+                            </span>
+                        </div>
+                        <div className="flex items-center gap-3 px-4 py-4">
+                            <span className="font-canva text-[12px] font-medium text-[#1A1A1A]">01</span>
+                            <span className="h-px flex-1 bg-[#1A1A1A]/25" />
+                            <h3 className="font-canva text-[11px] font-bold uppercase tracking-[0.08em] text-[#1A1A1A]">
+                                Architect&apos;s Wow Award 2024
+                            </h3>
+                        </div>
+                    </article>
+
+                    <article className="flex flex-col overflow-hidden rounded-[10px] bg-[#1C1C1C] text-white">
+                        <div className="flex items-start justify-between gap-4 px-4 pt-4">
+                            <p className="font-canva text-[9px] uppercase tracking-[0.14em] text-white/85">
+                                Delhi&apos;s Rising Star 2024
+                            </p>
+                            <p className="max-w-[140px] text-right font-canva text-[8px] uppercase tracking-[0.12em] text-white/70">
+                                Young leaders shaping a better tomorrow
+                            </p>
+                        </div>
+                        <div className="relative mt-5 flex-1 px-8 pb-2">
+                            <button
+                                type="button"
+                                aria-label="Previous highlights"
+                                onClick={() => setSlide((s) => (s - 1 + count) % count)}
+                                className="absolute left-2 top-1/2 z-[1] flex h-8 w-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-white/80 bg-[#1C1C1C]/80 text-white"
+                            >
+                                <ArrowRight className="h-3.5 w-3.5 rotate-180" strokeWidth={1.8} />
+                            </button>
+                            <div className="grid grid-cols-3 gap-2">
+                                {visible.map((photo) => (
+                                    <img
+                                        key={`${photo.src}-${slide}`}
+                                        src={photo.src}
+                                        alt={photo.alt}
+                                        className="aspect-[3/4] w-full object-cover"
+                                    />
+                                ))}
+                            </div>
+                            <button
+                                type="button"
+                                aria-label="Next highlights"
+                                onClick={() => setSlide((s) => (s + 1) % count)}
+                                className="absolute right-2 top-1/2 z-[1] flex h-8 w-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-white/80 bg-[#1C1C1C]/80 text-white"
+                            >
+                                <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.8} />
+                            </button>
+                        </div>
+                        <div className="mt-3 flex justify-center gap-1.5 pb-3">
+                            {RISING_STAR_PHOTOS.map((_, i) => (
+                                <button
+                                    key={i}
+                                    type="button"
+                                    aria-label={`Go to slide ${i + 1}`}
+                                    onClick={() => setSlide(i)}
+                                    className={
+                                        i === slide
+                                            ? "h-px w-4 bg-white"
+                                            : "h-1.5 w-1.5 rounded-full bg-white/40"
+                                    }
+                                />
+                            ))}
+                        </div>
+                        <div className="mt-auto flex items-center gap-3 border-t border-white/10 px-4 py-4">
+                            <span className="font-canva text-[12px] font-medium">02</span>
+                            <span className="h-px flex-1 bg-white/25" />
+                            <span className="inline-flex cursor-pointer items-center gap-2 font-canva text-[10px] font-bold uppercase tracking-[0.12em]">
+                                View highlights
+                                <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.8} />
+                            </span>
+                        </div>
+                    </article>
+
+                    <article className="overflow-hidden rounded-[10px] bg-[#E8E4DE]">
+                        <div className="relative aspect-[16/11] overflow-hidden bg-[#1A1A1A]">
+                            <img
+                                src={AWARD_PHOTO}
+                                alt="IDAC Expo Delhi"
+                                className="h-full w-full object-cover brightness-[0.72]"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-r from-black/45 via-black/10 to-transparent" />
+                            <span className="absolute bottom-4 left-4 inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-white/80 text-white">
+                                <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.8} />
+                            </span>
+                        </div>
+                        <div className="flex items-center gap-3 px-4 py-4">
+                            <span className="font-canva text-[12px] font-medium text-[#1A1A1A]">03</span>
+                            <span className="h-px flex-1 bg-[#1A1A1A]/25" />
+                            <div className="text-right">
+                                <h3 className="font-canva text-[11px] font-bold uppercase tracking-[0.08em] text-[#1A1A1A]">
+                                    Published at IDAC Expo
+                                </h3>
+                                <p className="mt-0.5 font-canva text-[10px] font-medium uppercase tracking-[0.12em] text-[#1A1A1A]/70">
+                                    Delhi
+                                </p>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+    );
+}
+
+function TestimonialsSection() {
+    const [index, setIndex] = useState(0);
+    const count = TESTIMONIALS.length;
+    const visible = [TESTIMONIALS[index], TESTIMONIALS[(index + 1) % count]];
+
+    const prev = () => setIndex((i) => (i - 1 + count) % count);
+    const next = () => setIndex((i) => (i + 1) % count);
+
+    return (
+        <section
+            data-sticky-stack
+            className="font-canva relative sticky top-0 z-[9] min-h-[100svh] overflow-hidden text-white"
+        >
+            <img
+                src={TESTIMONIAL_BG}
+                alt=""
+                className="absolute inset-0 h-full w-full object-cover object-right"
+                aria-hidden="true"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#2a2a2a] from-0% via-[#2a2a2a] via-[38%] to-[#2a2a2a]/25" />
+
+            <div className="relative mx-auto flex min-h-[100svh] max-w-[1240px] flex-col justify-center px-6 py-16 md:px-10 lg:py-20">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white">
+                    What clients say
+                </p>
+
+                <h2 className="mt-4 font-canva text-[clamp(2.35rem,5vw,4.15rem)] font-semibold italic leading-[1.08] tracking-[-0.01em]">
+                    <span className="block text-white">The Right People</span>
+                    <span className="block" style={{ color: TESTIMONIAL_ACCENT }}>
+                        Recognise the Work
+                    </span>
+                </h2>
+
+                <div className="mt-10 grid grid-cols-1 gap-4 lg:mt-12 lg:grid-cols-2 lg:gap-5">
+                    {visible.map((t, i) => (
+                        <article
+                            key={`${t.name}-${index}-${i}`}
+                            className={`grid min-h-[240px] overflow-hidden md:grid-cols-[1.12fr_0.88fr] md:min-h-[268px] ${
+                                i === 0
+                                    ? "border border-[#A75D41] bg-[#383838]"
+                                    : "bg-[#424242]"
+                            }`}
+                        >
+                            <div className="flex flex-col px-5 py-5 md:px-6 md:py-6">
+                                <span
+                                    className="text-[11px] font-medium tracking-[0.08em]"
+                                    style={{ color: TESTIMONIAL_ACCENT }}
+                                >
+                                    {String((index + i) % count + 1).padStart(2, "0")}
+                                </span>
+
+                                <span
+                                    className="mt-3 font-canva text-[42px] italic leading-none"
+                                    style={{ color: TESTIMONIAL_ACCENT }}
+                                    aria-hidden="true"
+                                >
+                                    &ldquo;
+                                </span>
+
+                                <p className="mt-1 whitespace-pre-line font-['Arial_MT_Pro','Arial_MT',Arial,sans-serif] text-[13px] italic leading-[1.5] text-white">
+                                    {t.quote}
+                                </p>
+
+                                <div className="mt-auto pt-6">
+                                    <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white">
+                                        {t.name}
+                                    </p>
+                                    <p className="mt-1 font-['Arial_MT_Pro','Arial_MT',Arial,sans-serif] text-[10px] uppercase tracking-[0.14em] text-white/80">
+                                        {t.detail}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="relative min-h-[180px] md:min-h-0">
+                                <img
+                                    src={t.image}
+                                    alt={t.alt}
+                                    className="absolute inset-0 h-full w-full object-cover"
+                                    loading="lazy"
+                                />
+                            </div>
+                        </article>
+                    ))}
+                </div>
+
+                <div className="mt-10 flex w-full items-center md:mt-12">
+                    <span className="hidden h-px w-[140px] shrink-0 bg-white lg:block lg:w-[180px]" />
+
+                    <div className="flex items-center md:ml-8 lg:ml-10">
+                        {TESTIMONIAL_STATS.map((stat, i) => (
+                            <div key={stat.value} className="flex items-center">
+                                {i > 0 ? (
+                                    <span className="mx-5 h-[52px] w-px shrink-0 bg-white md:mx-8 lg:mx-10" />
+                                ) : null}
+                                <div className="min-w-[118px] lg:min-w-[140px]">
+                                    <p className="text-[32px] font-bold leading-none text-white lg:text-[40px]">
+                                        {stat.value}
+                                    </p>
+                                    <p className="mt-1.5 text-[12px] font-normal leading-[1.3] text-white lg:text-[13px]">
+                                        {stat.line1}
+                                        <br />
+                                        {stat.line2}
+                                    </p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    <div className="ml-auto flex shrink-0 items-center gap-10">
+                        <button
+                            type="button"
+                            onClick={prev}
+                            aria-label="Previous testimonials"
+                            className="flex h-12 w-12 items-center justify-center bg-transparent p-0"
+                        >
+                            <svg viewBox="0 0 48 48" className="h-full w-full" fill="none" aria-hidden="true">
+                                <path
+                                    d="M29.72 41.6 A 18.5 18.5 0 1 1 29.72 6.4"
+                                    stroke="white"
+                                    strokeWidth="1.6"
+                                    strokeLinecap="round"
+                                />
+                                <path
+                                    d="M31.5 24H17.5m0 0 7.2-8.2M17.5 24l7.2 8.2"
+                                    stroke="white"
+                                    strokeWidth="2.2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                />
+                            </svg>
+                        </button>
+                        <button
+                            type="button"
+                            onClick={next}
+                            aria-label="Next testimonials"
+                            className="flex h-12 w-12 items-center justify-center bg-transparent p-0"
+                        >
+                            <svg viewBox="0 0 48 48" className="h-full w-full" fill="none" aria-hidden="true">
+                                <path
+                                    d="M18.28 6.4 A 18.5 18.5 0 1 1 18.28 41.6"
+                                    stroke="white"
+                                    strokeWidth="1.6"
+                                    strokeLinecap="round"
+                                />
+                                <path
+                                    d="M16.5 24h14m0 0-7.2-8.2M30.5 24l-7.2 8.2"
+                                    stroke="white"
+                                    strokeWidth="2.2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
+}
+
 export default function Home() {
     const rootRef = useRef(null);
     const heroRef = useRef(null);
@@ -1128,21 +1974,9 @@ export default function Home() {
             });
             heroTl
                 .fromTo(
-                    "[data-hero-eyebrow]",
-                    { y: 16, opacity: 0 },
-                    { y: 0, opacity: 1, duration: 0.6 }
-                )
-                .fromTo(
                     "[data-hero-word]",
                     { y: "110%" },
-                    { y: "0%", duration: 0.9, stagger: 0.1 },
-                    "-=0.25"
-                )
-                .fromTo(
-                    "[data-hero-underline]",
-                    { y: 12, opacity: 0 },
-                    { y: 0, opacity: 1, duration: 0.55 },
-                    "-=0.55"
+                    { y: "0%", duration: 0.9, stagger: 0.1 }
                 )
                 .fromTo(
                     "[data-hero-sub]",
@@ -1436,182 +2270,46 @@ export default function Home() {
 
                 {/* Video Overlays */}
                 <div className="absolute inset-0 bg-black/40" />
-                <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/45 to-black/15" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-black/25" />
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0.2)_0%,rgba(0,0,0,0.72)_100%)]" />
 
-                {/* Content */}
-                <div className="relative z-10 flex min-h-[100svh] items-center md:items-end">
-                    <div className="mx-auto w-full max-w-7xl px-6 pb-12 pt-24 md:px-10 md:pb-16 md:pt-32 lg:px-12">
-                        <div className="max-w-4xl">
-
-                            {/* Brand / Specialist line */}
-                            <div
-                                data-hero-eyebrow
-                                className="flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-xs font-bold uppercase tracking-[0.15em] sm:text-sm"
+                {/* Content — lower-middle, inset from left like the reference */}
+                <div className="relative z-10 flex min-h-[100svh] items-end justify-center px-6 pb-12 pt-28 sm:px-10 sm:pb-14 md:px-16 md:pb-16 lg:px-24 lg:pb-[72px]">
+                    <div className="w-fit max-w-full -translate-x-6 text-left sm:-translate-x-8 md:-translate-x-12 lg:-translate-x-16">
+                        <div className="overflow-hidden">
+                            <h1
+                                data-hero-word
+                                className="m-0 font-canva text-[clamp(26px,3.85vw,52px)] font-bold uppercase leading-[1.2] tracking-[-0.01em] text-white sm:whitespace-nowrap"
                             >
-                                <span className="text-[#E0C15A]">
-                                    Design Diaries
-                                </span>
-
-                                <span className="text-[#E0C15A]">──</span>
-
-                                <span className="text-[#E0C15A]">
-                                    Gym Interior Specialists
-                                </span>
-                            </div>
-
-                            {/* Heading */}
-                            <h1 className="font-display mt-6 uppercase leading-[0.95] tracking-[-0.01em] text-[13vw] sm:text-[9vw] md:text-[6.5vw] lg:text-[5.2rem]">
-
-                                <span className="block overflow-hidden">
-                                    <span
-                                        data-hero-word
-                                        className="block text-[#F5F3EE]"
-                                    >
-                                        Where gyms
-                                    </span>
-                                </span>
-
-                                <span className="mt-2 block overflow-hidden sm:mt-2 md:mt-3">
-                                    <span
-                                        data-hero-word
-                                        className="block text-[#F5F3EE]"
-                                    >
-                                        meet good
-                                    </span>
-                                </span>
-
-                                <span className="relative mt-2 block w-fit sm:mt-2 md:mt-3">
-                                    <span className="block overflow-hidden">
-                                        <span
-                                            data-hero-word
-                                            className="block text-[#E0C15A]"
-                                        >
-                                            design.
-                                        </span>
-                                    </span>
-                                    <img
-                                        src={designUnderline}
-                                        alt=""
-                                        aria-hidden="true"
-                                        data-hero-underline
-                                        className="pointer-events-none mt-2 w-[108%] max-w-none -translate-x-[2%] select-none"
-                                    />
-                                </span>
-
+                                GYMS, DESIGNED TO PERFORM
                             </h1>
+                        </div>
 
-                            {/* Description */}
-                            <p
-                                data-hero-sub
-                                className="mt-6 max-w-xl border-l-2 border-[#E0C15A]/70 pl-4 text-sm leading-7 text-[#D0CEC8] sm:text-base"
-                            >
-                                Specialised interior design for gyms and fitness spaces —
-                                built around function, performance and the people who use them.
-                            </p>
+                        <p
+                            data-hero-sub
+                            className="m-0 mt-[16px] max-w-[28rem] font-['Arial_MT_Pro','Arial_MT',Arial,sans-serif] text-[clamp(14px,1.15vw,18px)] font-normal leading-[1.55] text-white"
+                        >
+                            Gym interiors designed around movement,
+                            <br />
+                            performance and people.
+                        </p>
 
-                            {/* CTA Buttons */}
-                            <div className="mt-8 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
-
-                                <a
-                                    ref={heroCtaRef}
-                                    data-hero-cta
-                                    href="#start-project"
-                                    className="group inline-flex items-center justify-center gap-3 rounded-sm bg-[#E0C15A] px-7 py-4 text-xs font-bold uppercase tracking-[0.14em] text-[#050505] transition-colors duration-300 hover:bg-[#F5F3EE]"
-                                >
-                                    <span>Start Your Gym Project</span>
-
-                                    <span className="text-base transition-transform duration-300 group-hover:translate-x-1">
-                                        →
-                                    </span>
-                                </a>
-
-                                <a
-                                    data-hero-cta
-                                    href="#projects"
-                                    className="inline-flex items-center justify-center rounded-sm border border-[#F5F3EE]/40 bg-transparent px-7 py-4 text-xs font-bold uppercase tracking-[0.14em] text-[#F5F3EE] transition-colors duration-300 hover:border-[#E0C15A] hover:text-[#E0C15A]"
-                                >
-                                    View Our Gym Projects
-                                </a>
-
-                            </div>
-
-                            {/* Stats row */}
-                            <div
+                        <div className="mt-[36px] flex flex-col gap-4 sm:flex-row sm:items-stretch sm:gap-[18px]">
+                            <a
+                                ref={heroCtaRef}
                                 data-hero-cta
-                                className="mt-10 grid grid-cols-2 gap-x-4 gap-y-5 sm:flex sm:flex-wrap sm:items-center sm:gap-x-8"
+                                href="#start-project"
+                                className="inline-flex items-center justify-center border-2 border-transparent bg-[#A3684D] px-10 py-[14px] font-canva text-[12px] font-bold uppercase tracking-[0.14em] text-white transition-colors duration-300 hover:bg-[#B4785C]"
                             >
+                                START YOUR PROJECT
+                            </a>
 
-                                {/* Projects */}
-                                <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
-                                    <span className="font-display shrink-0 text-3xl text-[#E0C15A]">
-                                        15+
-                                    </span>
-
-                                    <span className="font-mono text-[10px] uppercase leading-tight tracking-[0.1em] text-[#D0CEC8] sm:text-[11px]">
-                                        Gym Projects
-                                        <br />
-                                        Designed
-                                    </span>
-                                </div>
-
-                                <div className="hidden h-8 w-px bg-[#F5F3EE]/15 sm:block" />
-
-                                {/* Location */}
-                                <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
-                                    <MapPin
-                                        size={20}
-                                        className="shrink-0 text-[#E0C15A]"
-                                        strokeWidth={1.75}
-                                    />
-
-                                    <span className="font-mono text-[10px] uppercase leading-tight tracking-[0.1em] sm:text-[11px]">
-                                        <span className="block text-[#F5F3EE]">
-                                            India
-                                        </span>
-
-                                        <span className="block text-[#D0CEC8]/60">
-                                            Across Cities
-                                        </span>
-                                    </span>
-                                </div>
-
-                                <div className="hidden h-8 w-px bg-[#F5F3EE]/15 sm:block" />
-
-                                {/* Fitness */}
-                                <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
-                                    <Dumbbell
-                                        size={20}
-                                        className="shrink-0 text-[#E0C15A]"
-                                        strokeWidth={1.75}
-                                    />
-
-                                    <span className="font-mono text-[10px] uppercase leading-tight tracking-[0.1em] text-[#D0CEC8] sm:text-[11px]">
-                                        Fitness
-                                        <br />
-                                        Spaces
-                                    </span>
-                                </div>
-
-                                <div className="hidden h-8 w-px bg-[#F5F3EE]/15 sm:block" />
-
-                                {/* Wellness */}
-                                <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
-                                    <Flower2
-                                        size={20}
-                                        className="shrink-0 text-[#E0C15A]"
-                                        strokeWidth={1.75}
-                                    />
-
-                                    <span className="font-mono text-[10px] uppercase leading-tight tracking-[0.1em] text-[#D0CEC8] sm:text-[11px]">
-                                        Wellness
-                                        <br />
-                                        Focused
-                                    </span>
-                                </div>
-
-                            </div>
-
+                            <a
+                                data-hero-cta
+                                href="#projects"
+                                className="inline-flex items-center justify-center border-2 border-white bg-transparent px-10 py-[14px] font-canva text-[12px] font-bold uppercase tracking-[0.14em] text-white transition-colors duration-300 hover:bg-white/10"
+                            >
+                                VIEW OUR WORK
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -1664,7 +2362,7 @@ export default function Home() {
 
                 {/* Projects Coverflow */}
                 <div className="relative mt-2 md:mt-4">
-                    <ProjectsCoverflow projects={PROJECTS} />
+                    <EdgeBleedProjectsColumn projects={PROJECTS} />
                 </div>
 
                 {/* Disclaimer / Placeholder Note */}
@@ -1676,692 +2374,66 @@ export default function Home() {
             {/* 3. WHY GYM INTERIORS — differentiation */}
             <section
                 data-sticky-stack
-                className="sticky top-0 z-[3] min-h-[100svh] overflow-hidden border-t border-[#F5F3EE]/5 bg-[#050505] py-20 text-[#F5F3EE] md:py-28"
+                className="font-canva sticky top-0 z-[3] min-h-[100svh] overflow-hidden py-16 pb-28 text-[#1A1A1A] md:py-20 md:pb-40"
+                style={{
+                    fontFamily: '"Canva Sans", sans-serif',
+                    background: "linear-gradient(180deg, #f2ede7 0%, #f2ede7 50%, #131313 100%)",
+                }}
             >
-                {/* Background animation */}
-                <div className="pointer-events-none absolute inset-0">
-                    <div className="absolute -left-40 top-0 hidden h-96 w-96 rounded-full bg-[#E0C15A]/[0.06] blur-[120px] md:block" />
-                    <div className="absolute right-[-150px] bottom-[-100px] hidden h-96 w-96 rounded-full bg-[#8B9A7E]/[0.04] blur-[130px] md:block" />
-
-                    <div
-                        className="absolute inset-0 opacity-[0.025]"
-                        style={{
-                            backgroundImage:
-                                "linear-gradient(#F5F3EE 1px, transparent 1px), linear-gradient(90deg, #F5F3EE 1px, transparent 1px)",
-                            backgroundSize: "44px 44px",
-                        }}
-                    />
-                </div>
-
-                <div className="relative mx-auto max-w-7xl px-6 md:px-10">
-                    {/* IMPORTANT: items-start */}
+                <div className="mx-auto max-w-7xl px-6 md:px-10">
                     <div
                         data-reveal-group
-                        className="grid grid-cols-1 items-stretch gap-14 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20"
-                    >
-                        {/* ================= LEFT ================= */}
-                        <div
-                            data-reveal
-                            className="self-start"
-                        >
-                            {/* Text is forced to TOP */}
-                            <div className="pt-0">
-                                <Label>Why gym interiors</Label>
-
-                                <h2 className="font-display mt-4 max-w-xl text-3xl uppercase leading-[0.94] tracking-[-0.02em] sm:text-4xl md:text-5xl">
-                                    We understand how a gym{" "}
-                                    <span className="text-[#E0C15A]">
-                                        has to work.
-                                    </span>
-                                </h2>
-
-                                <p className="font-editorial mt-6 max-w-lg text-lg leading-7 text-[#D0CEC8]">
-                                    A gym is not a home, a shop, or an office with machines
-                                    in it. Equipment, movement, light, and wear have to be
-                                    designed together — or the room fails once people
-                                    start training.
-                                </p>
-                            </div>
-
-                            {/* ================= ANIMATED AREA ================= */}
-                            <div className="relative mt-10 h-[300px] overflow-hidden border border-[#F5F3EE]/10 bg-[#0F0F0F]">
-                                {/* grid */}
-                                <div
-                                    className="absolute inset-0 opacity-[0.06]"
-                                    style={{
-                                        backgroundImage:
-                                            "linear-gradient(#F5F3EE 1px, transparent 1px), linear-gradient(90deg, #F5F3EE 1px, transparent 1px)",
-                                        backgroundSize: "30px 30px",
-                                    }}
-                                />
-
-                                {/* glow */}
-                                <div className="absolute left-1/2 top-1/2 h-40 w-40 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#E0C15A]/10 blur-[70px]" />
-
-                                {/* top information */}
-                                <div className="absolute left-5 right-5 top-5 flex items-center justify-between">
-                                    <div className="flex items-center gap-2">
-                                        <span className="h-1.5 w-1.5 rounded-full bg-[#E0C15A] shadow-[0_0_12px_#E0C15A]" />
-                                        <span className="font-mono text-[8px] uppercase tracking-[0.2em] text-[#F5F3EE]/40">
-                                            Gym planning
-                                        </span>
-                                    </div>
-
-                                    <span className="font-mono text-[8px] tracking-[0.2em] text-[#F5F3EE]/25">
-                                        01—07
-                                    </span>
-                                </div>
-
-                                {/* main diagram */}
-                                <div className="absolute left-[8%] right-[8%] top-1/2 -translate-y-1/2">
-                                    <div className="relative h-[100px]">
-                                        {/* connecting line */}
-                                        <div className="absolute left-0 right-0 top-1/2 h-px bg-[#E0C15A]/25" />
-
-                                        {/* animated light */}
-                                        <div className="absolute top-1/2 h-px w-20 -translate-y-1/2 bg-gradient-to-r from-transparent via-[#E0C15A] to-transparent animate-[moveLine_3s_linear_infinite]" />
-
-                                        {/* Zone 1 */}
-                                        <div className="absolute left-0 top-1/2 h-16 w-[27%] -translate-y-1/2 border border-[#F5F3EE]/15 bg-[#F5F3EE]/[0.02]">
-                                            <span className="absolute -top-5 left-0 font-mono text-[7px] uppercase tracking-[0.18em] text-[#8F8F8F]">
-                                                Strength
-                                            </span>
-
-                                            <div className="absolute inset-3 grid grid-cols-3 gap-1">
-                                                <span className="border border-[#F5F3EE]/10" />
-                                                <span className="border border-[#F5F3EE]/10" />
-                                                <span className="border border-[#F5F3EE]/10" />
-                                            </div>
-                                        </div>
-
-                                        {/* Zone 2 */}
-                                        <div className="absolute left-1/2 top-1/2 h-24 w-[25%] -translate-x-1/2 -translate-y-1/2 border border-[#E0C15A]/40 bg-[#E0C15A]/[0.04]">
-                                            <span className="absolute -top-5 left-0 font-mono text-[7px] uppercase tracking-[0.18em] text-[#E0C15A]">
-                                                Movement
-                                            </span>
-
-                                            <span className="absolute left-1/2 top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#E0C15A] bg-[#050505] shadow-[0_0_20px_rgba(201,116,69,0.35)]" />
-
-                                            <span className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-[#E0C15A]/15" />
-                                            <span className="absolute left-0 top-1/2 h-px w-full -translate-y-1/2 bg-[#E0C15A]/15" />
-                                        </div>
-
-                                        {/* Zone 3 */}
-                                        <div className="absolute right-0 top-1/2 h-16 w-[27%] -translate-y-1/2 border border-[#8B9A7E]/25 bg-[#8B9A7E]/[0.025]">
-                                            <span className="absolute -top-5 left-0 font-mono text-[7px] uppercase tracking-[0.18em] text-[#8B9A7E]">
-                                                Recovery
-                                            </span>
-
-                                            <div className="absolute left-3 right-3 top-1/2 h-px bg-[#8B9A7E]/25" />
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* bottom data */}
-                                <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between">
-                                    <div>
-                                        <p className="font-mono text-[7px] uppercase tracking-[0.18em] text-[#F5F3EE]/25">
-                                            Planning logic
-                                        </p>
-
-                                        <p className="mt-1 font-mono text-[8px] uppercase tracking-[0.15em] text-[#E0C15A]">
-                                            Flow / Clearance / Capacity
-                                        </p>
-                                    </div>
-
-                                    <div className="text-right">
-                                        <p className="font-mono text-[7px] uppercase tracking-[0.18em] text-[#F5F3EE]/25">
-                                            Status
-                                        </p>
-
-                                        <p className="mt-1 font-mono text-[8px] uppercase tracking-[0.15em] text-[#8B9A7E]">
-                                            ● Optimised
-                                        </p>
-                                    </div>
-                                </div>
-
-                                {/* scanning animation */}
-                                <div className="absolute left-0 top-0 h-px w-full bg-gradient-to-r from-transparent via-[#E0C15A]/60 to-transparent animate-[scan_4s_linear_infinite]" />
-                            </div>
-
-                            {/* Bottom stats */}
-                            <div className="mt-8 grid grid-cols-3 border-t border-[#F5F3EE]/10 pt-6 text-center">
-
-                                {/* Stat 01 */}
-                                <div className="group px-2">
-                                    <span className="font-mono text-[8px] uppercase tracking-[0.2em] text-[#E0C15A]">
-                                        01
-                                    </span>
-
-                                    <p className="mt-2 font-display text-2xl uppercase leading-none text-[#F5F3EE] transition-colors duration-300 group-hover:text-[#E0C15A]">
-                                        Plan
-                                    </p>
-
-                                    <p className="mt-1 font-mono text-[8px] uppercase tracking-[0.16em] text-[#8F8F8F]">
-                                        First
-                                    </p>
-                                </div>
-
-                                {/* Stat 02 */}
-                                <div className="group border-l border-[#F5F3EE]/10 px-2">
-                                    <span className="font-mono text-[8px] uppercase tracking-[0.2em] text-[#F5F3EE]/40">
-                                        02
-                                    </span>
-
-                                    <p className="mt-2 font-display text-2xl uppercase leading-none text-[#F5F3EE] transition-colors duration-300 group-hover:text-[#E0C15A]">
-                                        360°
-                                    </p>
-
-                                    <p className="mt-1 font-mono text-[8px] uppercase tracking-[0.16em] text-[#8F8F8F]">
-                                        Space view
-                                    </p>
-                                </div>
-
-                                {/* Stat 03 */}
-                                <div className="group border-l border-[#F5F3EE]/10 px-2">
-                                    <span className="font-mono text-[8px] uppercase tracking-[0.2em] text-[#F5F3EE]/40">
-                                        03
-                                    </span>
-
-                                    <p className="mt-2 font-display text-2xl uppercase leading-none text-[#F5F3EE] transition-colors duration-300 group-hover:text-[#E0C15A]">
-                                        24/7
-                                    </p>
-
-                                    <p className="mt-1 font-mono text-[8px] uppercase tracking-[0.16em] text-[#8F8F8F]">
-                                        Built for use
-                                    </p>
-                                </div>
-
-                            </div>
-                        </div>
-
-                        {/* ================= RIGHT ================= */}
-                        <SpecialistList points={SPECIALIST_POINTS} />
-                    </div>
-                </div>
-
-                <style>{`
-        @keyframes scan {
-            0% {
-                transform: translateY(0);
-                opacity: 0;
-            }
-
-            10% {
-                opacity: 1;
-            }
-
-            90% {
-                opacity: 1;
-            }
-
-            100% {
-                transform: translateY(300px);
-                opacity: 0;
-            }
-        }
-
-        @keyframes moveLine {
-            0% {
-                left: 0;
-                opacity: 0;
-            }
-
-            15% {
-                opacity: 1;
-            }
-
-            85% {
-                opacity: 1;
-            }
-
-            100% {
-                left: calc(100% - 80px);
-                opacity: 0;
-            }
-        }
-    `}</style>
-            </section>
-
-            {/* 4. EXPERIENCE + SERVICES — credibility */}
-            <section
-                id="services"
-                data-sticky-stack
-                className="sticky top-0 z-[4] min-h-[100svh] overflow-hidden border-t border-[#F5F3EE]/5 bg-[#0A0A0A] py-20 text-[#F5F3EE] md:py-28"
-            >
-                {/* Ambient background */}
-                <div className="pointer-events-none absolute inset-0 overflow-hidden">
-                    <div
-                        className="absolute -right-40 top-20 hidden h-96 w-96 rounded-full bg-[#E0C15A]/[0.035] blur-3xl md:block"
-                        style={{
-                            animation: "experienceGlow 9s ease-in-out infinite",
-                        }}
-                    />
-
-                    <div
-                        className="absolute left-1/4 bottom-0 hidden h-72 w-72 rounded-full bg-[#E0C15A]/[0.025] blur-3xl md:block"
-                        style={{
-                            animation: "experienceGlowReverse 11s ease-in-out infinite",
-                        }}
-                    />
-
-                    <div
-                        className="absolute inset-0 opacity-[0.018]"
-                        style={{
-                            backgroundImage:
-                                "linear-gradient(#F5F3EE 1px, transparent 1px), linear-gradient(90deg, #F5F3EE 1px, transparent 1px)",
-                            backgroundSize: "90px 90px",
-                        }}
-                    />
-                </div>
-
-                <div className="relative mx-auto max-w-7xl px-6 md:px-10">
-
-                    {/* EXPERIENCE INTRO */}
-                    <div
-                        data-reveal-group
-                        className="grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-end lg:gap-20"
+                        className="grid items-center gap-10 lg:grid-cols-[0.9fr_1.15fr] lg:gap-16"
                     >
                         <div data-reveal>
-                            <div className="flex items-center gap-3">
-                                <span className="h-px w-8 bg-[#E0C15A]" />
-                                <Label>Experience</Label>
-                            </div>
-
-                            <h2 className="font-display mt-5 max-w-4xl uppercase tracking-[-0.012em]">
-                                <span className="block text-3xl leading-[1.02] sm:text-4xl md:text-5xl lg:text-[3.7rem]">
-                                    Real gyms.
-                                </span>
-
-                                <span className="block text-3xl leading-[1.02] sm:text-4xl md:text-5xl lg:text-[3.7rem]">
-                                    Repeated work.
-                                </span>
-
-                                <span className="block text-3xl leading-[1.02] text-[#E0C15A] sm:text-4xl md:text-5xl lg:text-[3.7rem]">
-                                    Accumulated knowledge.
-                                </span>
+                            <p className="font-canva text-[13px] font-medium uppercase tracking-[0.28em] text-[#1A1A1A] md:text-[14px]">
+                                Why gym interiors
+                            </p>
+                            <h2 className="mt-5 font-canva text-[clamp(2.35rem,5.2vw,4.35rem)] font-bold uppercase leading-[0.92] tracking-[-0.02em] text-[#A3684D]">
+                                More than
+                                <br />
+                                just
+                                <br />
+                                aesthetics
+                                <br />
+                                alone.
                             </h2>
                         </div>
-
-                        <div data-reveal className="lg:pb-1">
-                            <div className="border-l border-[#E0C15A]/30 pl-5">
-                                <p className="text-[15px] leading-7 text-[#8F8F8F]">
-                                    The specialisation comes from building gyms, not
-                                    from a positioning line. Approx. 15 gym projects.
-                                    New enquiries that have come back through word of
-                                    mouth. Functional knowledge that only shows up
-                                    once people are actually training in the room.
-                                </p>
-                            </div>
+                        <div data-reveal>
+                            <GymFloorPlan />
                         </div>
                     </div>
 
-                    {/* EXPERIENCE STATS */}
-                    <div
-                        data-reveal-group
-                        className="mt-14 grid gap-3 md:mt-16 md:grid-cols-3"
-                    >
-                        {/* 01 */}
-                        <div
-                            data-reveal
-                            className="group relative min-h-[210px] overflow-hidden border border-[#F5F3EE]/10 bg-[#0D0D0D] p-6 transition-all duration-500 hover:border-[#E0C15A]/35"
-                        >
-                            <div className="absolute right-0 top-0 h-24 w-24 border-l border-b border-[#E0C15A]/10 transition-all duration-500 group-hover:h-32 group-hover:w-32" />
-
-                            <div className="flex items-start justify-between">
-                                <span className="font-mono text-[9px] tracking-[0.18em] text-[#E0C15A]">
-                                    01 / EXPERIENCE
-                                </span>
-
-                                <span className="font-mono text-[9px] text-[#F5F3EE]/25">
-                                    15+
-                                </span>
-                            </div>
-
-                            <div className="mt-14">
-                                <p className="font-display text-4xl uppercase leading-none text-[#E0C15A] sm:text-5xl">
-                                    Approx. 15
-                                </p>
-
-                                <p className="mt-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#F5F3EE]/55">
-                                    Gym projects
-                                </p>
-
-                                <p className="mt-3 max-w-sm text-[13px] leading-6 text-[#8F8F8F]">
-                                    Independent gym interiors planned around how
-                                    people actually train.
-                                </p>
-                            </div>
-
-                            <div className="absolute bottom-5 left-6 h-px w-10 bg-[#E0C15A]/50 transition-all duration-500 group-hover:w-20" />
-                        </div>
-
-                        {/* 02 */}
-                        <div
-                            data-reveal
-                            className="group relative min-h-[210px] overflow-hidden border border-[#F5F3EE]/10 bg-[#0D0D0D] p-6 transition-all duration-500 hover:border-[#E0C15A]/35"
-                        >
-                            <div className="absolute right-5 top-5 h-8 w-8 rounded-full border border-[#F5F3EE]/10 transition-all duration-500 group-hover:scale-125 group-hover:border-[#E0C15A]/30" />
-
-                            <span className="font-mono text-[9px] tracking-[0.18em] text-[#E0C15A]">
-                                02 / TRUST
-                            </span>
-
-                            <div className="mt-14">
-                                <p className="font-display text-3xl uppercase leading-none sm:text-4xl">
-                                    Word of mouth
-                                </p>
-
-                                <p className="mt-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#F5F3EE]/55">
-                                    Repeat enquiries
-                                </p>
-
-                                <p className="mt-3 max-w-sm text-[13px] leading-6 text-[#8F8F8F]">
-                                    Work has followed from people who have already
-                                    seen a gym through the process.
-                                </p>
-                            </div>
-
-                            <div className="absolute bottom-5 left-6 h-px w-10 bg-[#F5F3EE]/20 transition-all duration-500 group-hover:w-20 group-hover:bg-[#E0C15A]" />
-                        </div>
-
-                        {/* 03 */}
-                        <div
-                            data-reveal
-                            className="group relative min-h-[210px] overflow-hidden border border-[#F5F3EE]/10 bg-[#0D0D0D] p-6 transition-all duration-500 hover:border-[#E0C15A]/35"
-                        >
-                            <div className="absolute bottom-0 right-0 h-20 w-20 border-l border-t border-[#F5F3EE]/10 transition-all duration-500 group-hover:h-28 group-hover:w-28" />
-
-                            <span className="font-mono text-[9px] tracking-[0.18em] text-[#E0C15A]">
-                                03 / KNOWLEDGE
-                            </span>
-
-                            <div className="mt-14">
-                                <p className="font-display text-3xl uppercase leading-none sm:text-4xl">
-                                    On the floor
-                                </p>
-
-                                <p className="mt-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#F5F3EE]/55">
-                                    Functional knowledge
-                                </p>
-
-                                <p className="mt-3 max-w-sm text-[13px] leading-6 text-[#8F8F8F]">
-                                    Circulation, glare, storage, flooring,
-                                    equipment conflicts — learned by doing the work.
-                                </p>
-                            </div>
-
-                            <div className="absolute bottom-5 left-6 h-px w-10 bg-[#F5F3EE]/20 transition-all duration-500 group-hover:w-20 group-hover:bg-[#E0C15A]" />
-                        </div>
-                    </div>
-
-                    {/* SERVICES */}
-                    {/* ================= SERVICES ================= */}
-                    <div
-                        data-reveal-group
-                        className="mt-20 border-t border-[#F5F3EE]/10 pt-12 md:mt-24"
-                    >
-                        {/* HEADER */}
-                        <div
-                            data-reveal
-                            className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between"
-                        >
-                            <div>
-                                <div className="flex items-center gap-3">
-                                    <span className="h-px w-8 bg-[#E0C15A]" />
-                                    <Label>Services</Label>
-                                </div>
-
-                                <h3 className="font-display mt-4 text-3xl uppercase leading-none sm:text-4xl">
-                                    What we do.
-                                </h3>
-                            </div>
-
-                            {/* Desktop only */}
-                            <p className="max-md:hidden max-w-sm text-[13px] leading-6 text-[#8F8F8F] md:text-right">
-                                Full interior design for gyms, fitness studios, and wellness spaces —
-                                from concept to finished room.
-                            </p>
-                        </div>
-
-                        {/* ================= PREMIUM PROCESS DIAGRAM ================= */}
-                        <div
-                            data-reveal
-                            className="relative mt-14 w-full overflow-hidden sm:mt-16 md:mt-20"
-                        >
-                            <div className="relative w-full">
-
-                                {/* MAIN HORIZONTAL AXIS */}
-                                <div
-                                    className="
-                    absolute
-                    left-[4%] right-[4%]
-                    top-[12px]
-                    h-px
-                    bg-[#F5F3EE]/10
-                "
-                                />
-
-                                {/* ================= THREE SERVICES ================= */}
-                                <div className="relative grid grid-cols-3">
-                                    {SERVICES.map((service, index) => {
-                                        const stage =
-                                            index === 0
-                                                ? "PLAN"
-                                                : index === 1
-                                                    ? "DEFINE"
-                                                    : "BUILD";
-
-                                        return (
-                                            <div
-                                                key={service.title}
-                                                className="group relative min-w-0 text-center"
-                                            >
-                                                {/* NUMBER + NODE */}
-                                                <div className="relative z-10 mx-auto flex w-fit items-center gap-1.5 bg-[#0A0A0A] px-1 sm:gap-2">
-                                                    <span className="font-mono text-[7px] tracking-[0.15em] text-[#E0C15A] sm:text-[9px]">
-                                                        {String(index + 1).padStart(2, "0")}
-                                                    </span>
-
-                                                    <span className="relative flex h-3 w-3 items-center justify-center">
-                                                        <span className="absolute h-3 w-3 rounded-full border border-[#E0C15A]/40 transition-all duration-500 group-hover:scale-150 group-hover:border-[#E0C15A]/80" />
-
-                                                        <span className="h-1.5 w-1.5 rounded-full bg-[#E0C15A]" />
-                                                    </span>
-                                                </div>
-
-                                                {/* STEM */}
-                                                <div className="mx-auto h-8 w-px bg-gradient-to-b from-[#E0C15A]/40 to-[#F5F3EE]/10 sm:h-10 md:h-11" />
-
-                                                {/* TITLE */}
-                                                <h4
-                                                    className="
-                                    font-display
-                                    px-1
-                                    text-[14px]
-                                    uppercase
-                                    leading-none
-                                    tracking-wide
-                                    transition-all
-                                    duration-300
-                                    group-hover:text-[#E0C15A]
-                                    sm:text-[20px]
-                                    md:text-3xl
-                                "
-                                                >
-                                                    {service.title}
-                                                </h4>
-
-                                                {/* DESCRIPTION */}
-                                                <p
-                                                    className="
-                                    mx-auto
-                                    mt-2
-                                    max-w-[105px]
-                                    px-1
-                                    text-[8px]
-                                    leading-4
-                                    text-[#8F8F8F]
-                                    sm:max-w-[170px]
-                                    sm:text-[11px]
-                                    sm:leading-5
-                                    md:max-w-[210px]
-                                    md:text-[12px]
-                                "
-                                                >
-                                                    {service.copy}
-                                                </p>
-
-                                                {/* STAGE */}
-                                                <div className="mx-auto mt-3 flex w-fit items-center gap-1 sm:mt-5 sm:gap-2">
-                                                    <span className="h-px w-2 bg-[#E0C15A]/40 sm:w-4" />
-
-                                                    <span className="font-mono text-[6px] tracking-[0.16em] text-[#F5F3EE]/40 sm:text-[8px] sm:tracking-[0.22em]">
-                                                        {stage}
-                                                    </span>
-
-                                                    <span className="h-px w-2 bg-[#E0C15A]/40 sm:w-4" />
-                                                </div>
-
-                                                {/* LOWER STEM */}
-                                                <div className="mx-auto mt-3 h-5 w-px bg-[#F5F3EE]/10 sm:mt-5 sm:h-7" />
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-
-                                {/* ================= CONVERGENCE ================= */}
-                                <div
-                                    className="
-                    relative
-                    mx-auto
-                    mt-0
-                    h-[52px]
-                    w-[58%]
-                    sm:h-[65px]
-                    md:h-[72px]
-                "
-                                >
-                                    {/* LEFT DIAGONAL */}
-                                    <span
-                                        className="
-                        absolute
-                        left-0 top-0
-                        h-px w-[42%]
-                        origin-right
-                        rotate-[24deg]
-                        bg-[#F5F3EE]/10
-                    "
-                                    />
-
-                                    {/* CENTER */}
-                                    <span
-                                        className="
-                        absolute
-                        left-1/2 top-0
-                        h-[42px] w-px
-                        -translate-x-1/2
-                        bg-gradient-to-b
-                        from-[#F5F3EE]/10
-                        to-[#E0C15A]/50
-                        sm:h-[55px]
-                        md:h-[60px]
-                    "
-                                    />
-
-                                    {/* RIGHT DIAGONAL */}
-                                    <span
-                                        className="
-                        absolute
-                        right-0 top-0
-                        h-px w-[42%]
-                        origin-left
-                        -rotate-[24deg]
-                        bg-[#F5F3EE]/10
-                    "
-                                    />
-
-                                    {/* FINAL NODE */}
-                                    <span className="absolute bottom-0 left-1/2 flex h-3.5 w-3.5 -translate-x-1/2 items-center justify-center sm:h-4 sm:w-4">
-                                        <span className="absolute h-3.5 w-3.5 rounded-full border border-[#E0C15A]/40 sm:h-4 sm:w-4" />
-
-                                        <span className="h-1.5 w-1.5 rounded-full bg-[#E0C15A]" />
-                                    </span>
-                                </div>
-
-                                {/* ================= OUTCOME ================= */}
-                                <div className="text-center">
-                                    <p className="font-mono text-[6px] uppercase tracking-[0.22em] text-[#8F8F8F]/60 sm:text-[8px] sm:tracking-[0.28em]">
-                                        The outcome
-                                    </p>
-
-                                    <h4 className="font-display mt-2 text-[18px] uppercase leading-none tracking-wide sm:text-2xl md:text-3xl">
-                                        The gym{" "}
-                                        <span className="text-[#E0C15A]">
-                                            has to work.
-                                        </span>
-                                    </h4>
-                                </div>
-                            </div>
-                        </div>
+                    <div data-reveal>
+                        <WhyGymCards />
                     </div>
                 </div>
-
-                <style>{`
-        @keyframes experienceGlow {
-            0%, 100% {
-                transform: translate3d(0, 0, 0) scale(1);
-            }
-            50% {
-                transform: translate3d(-30px, 25px, 0) scale(1.1);
-            }
-        }
-
-        @keyframes experienceGlowReverse {
-            0%, 100% {
-                transform: translate3d(0, 0, 0) scale(1);
-            }
-            50% {
-                transform: translate3d(25px, -20px, 0) scale(1.08);
-            }
-        }
-    `}</style>
             </section>
 
             {/* ================= APPROACH ================= */}
             <section
                 id="approach"
                 data-sticky-stack
-                className="sticky top-0 z-[5] min-h-[100svh] overflow-hidden border-t border-[#F5F3EE]/10 bg-[#0A0A0A] py-20 text-[#F5F3EE] md:py-28"
+                className="font-canva sticky top-0 z-[5] min-h-[100svh] overflow-hidden border-t border-[#F5F3EE]/10 bg-[#0E0E0E] py-16 text-white md:py-24"
+                style={{ fontFamily: '"Canva Sans", sans-serif' }}
             >
                 <div className="mx-auto max-w-7xl px-6 md:px-10">
-
-                    {/* ================= HEADER ================= */}
-                    <div
-                        data-reveal-group
-                        className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between"
-                    >
+                    <div data-reveal-group>
                         <div data-reveal>
-                            <Label>Our approach</Label>
-
-                            <h2 className="font-display mt-4 max-w-3xl text-3xl uppercase leading-[0.94] tracking-[-0.02em] sm:text-4xl md:text-5xl">
-                                A gym is designed{" "}
-                                <span className="text-[#E0C15A]">
-                                    in sequence.
-                                </span>
+                            <p className="font-canva text-[18px] font-medium uppercase tracking-[0.32em] text-white md:text-[22px]">
+                                The
+                            </p>
+                            <h2 className="mt-1.5 font-canva text-[clamp(2.5rem,6vw,4.75rem)] font-bold uppercase leading-[0.95] tracking-[0.04em]">
+                                <span style={{ color: "#A06A50" }}>Sagrika</span>{" "}
+                                <span className="text-white">Method</span>
                             </h2>
+                            <p className="mt-6 font-canva text-[12px] font-medium uppercase tracking-[0.68em] text-[#FFFFFF] md:text-[13px]">
+                                From insight to impact
+                            </p>
                         </div>
-
-                        <p
-                            data-reveal
-                            className="max-w-sm font-mono text-[10px] uppercase leading-7 tracking-[0.18em] text-[#E0C15A]/60 md:max-w-xs md:pb-2 md:leading-normal"
-                        >
-                            Understand → Research → Plan → Design → Build → Learn
-                        </p>
                     </div>
 
-                    {/* ================= PROCESS ================= */}
-                    <div data-reveal className="relative mt-24 md:mt-24">
+                    <div data-reveal className="relative mt-16 md:mt-20">
                         <div className="hidden md:block">
                             <WavyProcessRow steps={APPROACH} />
                         </div>
@@ -2506,231 +2578,11 @@ export default function Home() {
                 </a>
             </section>
 
-            {/* 6b. SOCIAL PROOF — premium testimonial cards */}
-            <section
-                data-sticky-stack
-                className="sticky top-0 z-[7] min-h-[100svh] border-t border-[#F5F3EE]/5 bg-[#0A0A0A] py-20 text-[#F5F3EE] md:py-28"
-            >
-                <div className="mx-auto max-w-7xl px-6 md:px-10">
+            <CaseStudySpotlight />
 
-                    {/* HEADER */}
-                    <div
-                        data-reveal-group
-                        className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between"
-                    >
-                        <div data-reveal>
-                            <div className="flex items-center gap-3">
-                                <span className="h-px w-8 bg-[#E0C15A]" />
-                                <Label>What clients say</Label>
-                            </div>
+            <RecognitionSection />
 
-                            <h2 className="font-display mt-4 max-w-2xl text-3xl uppercase leading-[0.94] tracking-[-0.02em] sm:text-4xl md:text-5xl">
-                                The right people{" "}
-                                <span className="text-[#E0C15A]">
-                                    recognise the work.
-                                </span>
-                            </h2>
-                        </div>
-
-                        <p
-                            data-reveal
-                            className="max-w-xs text-[11px] uppercase leading-5 tracking-[0.14em] text-[#8F8F8F] md:text-right"
-                        >
-                            Real spaces.
-                            <br className="hidden md:block" />
-                            Real outcomes.
-                        </p>
-                    </div>
-
-                    {/* TESTIMONIAL CARDS */}
-                    <div
-                        data-reveal-group
-                        className="mt-14 grid gap-4 md:mt-16 md:grid-cols-3 md:gap-5"
-                    >
-                        {TESTIMONIALS.map((t, index) => (
-                            <article
-                                data-reveal
-                                key={t.name}
-                                className={`
-                        group relative overflow-hidden
-                        border border-[#F5F3EE]/10
-                        bg-[#0D0D0D]
-                        px-6 py-7
-                        transition-all duration-500
-                        hover:-translate-y-1
-                        hover:border-[#E0C15A]/40
-                        md:px-7 md:py-8
-                        ${index === 1 ? "md:translate-y-8" : ""}
-                    `}
-                            >
-                                {/* TOP META */}
-                                <div className="flex items-center justify-between">
-                                    <span className="font-mono text-[9px] tracking-[0.2em] text-[#E0C15A]">
-                                        {String(index + 1).padStart(2, "0")}
-                                    </span>
-
-                                    <span className="h-px w-10 bg-[#F5F3EE]/10 transition-all duration-500 group-hover:w-16 group-hover:bg-[#E0C15A]/50" />
-                                </div>
-
-                                {/* LARGE QUOTE */}
-                                <div className="mt-10">
-                                    <span className="font-editorial block text-5xl leading-[0.5] text-[#E0C15A]/50">
-                                        "
-                                    </span>
-
-                                    <p className="font-editorial mt-5 text-xl leading-8 text-[#D0CEC8] transition-colors duration-300 group-hover:text-[#F5F3EE]">
-                                        {t.quote}
-                                    </p>
-                                </div>
-
-                                {/* CLIENT */}
-                                <div className="mt-10 border-t border-[#F5F3EE]/10 pt-5">
-                                    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#F5F3EE]/80">
-                                        {t.name}
-                                    </p>
-
-                                    <p className="mt-1.5 text-[10px] uppercase tracking-[0.14em] text-[#8F8F8F]">
-                                        {t.detail}
-                                    </p>
-                                </div>
-
-                                {/* ACCENT */}
-                                <span className="absolute bottom-0 left-0 h-px w-0 bg-[#E0C15A] transition-all duration-500 group-hover:w-full" />
-                            </article>
-                        ))}
-                    </div>
-
-                    {/* FOOTNOTE */}
-                    <div className="mt-16 flex items-center gap-3 md:mt-20">
-                        <span className="h-px w-7 bg-[#E0C15A]/50" />
-
-                        <span className="font-mono text-[8px] uppercase tracking-[0.22em] text-[#F5F3EE]/25">
-                            Client perspectives
-                        </span>
-                    </div>
-
-                </div>
-            </section>
-
-            {/* 7. FEATURED CASE / INSIGHTS */}
-            <section
-                data-sticky-stack
-                className="sticky top-0 z-[8] min-h-[100svh] border-t border-[#F5F3EE]/5 bg-[#050505] py-20 text-[#F5F3EE] md:py-24"
-            >
-                <div className="mx-auto max-w-7xl px-6 md:px-10">
-
-                    {/* ================= HEADER ================= */}
-                    <div
-                        data-reveal-group
-                        className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between"
-                    >
-                        <div data-reveal className="max-w-2xl">
-                            <div className="flex items-center gap-3">
-                                <span className="h-px w-9 bg-[#E0C15A]" />
-
-                                <span className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[#E0C15A]">
-                                    Featured insight
-                                </span>
-                            </div>
-
-                            <h2 className="font-display mt-5 text-3xl uppercase leading-[0.94] tracking-[-0.02em] sm:text-4xl md:text-[2.6rem]">
-                                A gym is decided in the plan, not in the{" "}
-                                <span className="text-[#E0C15A]">
-                                    finishes.
-                                </span>
-                            </h2>
-                        </div>
-
-                        <p
-                            data-reveal
-                            className="max-w-md text-sm leading-6 text-[#8F8F8F] lg:pb-1"
-                        >
-                            Before and after on a gym project is rarely a paint change.
-                            It is zoning, equipment, mirrors, light, and how the room is used.
-                        </p>
-                    </div>
-
-                    {/* ================= CONTENT ================= */}
-                    <div
-                        data-reveal-group
-                        className="mt-12 grid items-start gap-10 lg:grid-cols-[1.08fr_0.92fr] lg:gap-16"
-                    >
-
-                        {/* ================= IMAGE ================= */}
-                        <div data-reveal>
-                            <div className="group relative">
-
-                                {/* Offset frame */}
-                                <div className="absolute -inset-2 border border-[#F5F3EE]/[0.05] transition-colors duration-500 group-hover:border-[#E0C15A]/20" />
-
-                                <div className="relative aspect-[16/12] overflow-hidden bg-[#080808]">
-
-                                    <img
-                                        data-parallax-img
-                                        src="https://images.openai.com/static-rsc-4/mlzuMiMq7KOaR7q4FWKa4Xy48PPJTOF3ldYewaA7niW3T6VCbmaEuLYmfov8VpXVw9CHdphSBQ1udh9ZOe1qSrgz9Od6w7Q-DU4XML_hEWQ2OWdUdUJ-E9tdZDrwsrhvf8zqecFpoRMfoSN5jvPIhOKxWB7Qp2LqDE_VvjcG2mzs3MiqhPCORoiy_MECww8X?purpose=fullsize"
-                                        alt="Gym equipment placement and circulation along a training floor"
-                                        className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.035]"
-                                        loading="lazy"
-                                    />
-
-                                    {/* Image overlay */}
-                                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#050505]/55 via-transparent to-transparent" />
-
-                                    {/* Corner marks */}
-                                    <span className="absolute left-4 top-4 h-6 w-6 border-l border-t border-[#E0C15A]/70" />
-                                    <span className="absolute bottom-4 right-4 h-6 w-6 border-b border-r border-[#E0C15A]/70" />
-
-                                    {/* Image label */}
-                                    <span className="absolute bottom-4 left-4 font-mono text-[8px] uppercase tracking-[0.2em] text-[#F5F3EE]/55">
-                                        Planning / 01
-                                    </span>
-
-                                    {/* Small arrow */}
-                                    <span className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center border border-[#F5F3EE]/20 bg-[#050505]/35 backdrop-blur-sm transition-all duration-300 group-hover:border-[#E0C15A]/60 group-hover:bg-[#E0C15A]">
-                                        <svg
-                                            viewBox="0 0 24 24"
-                                            fill="none"
-                                            className="h-4 w-4 text-[#F5F3EE] transition-colors duration-300 group-hover:text-[#050505]"
-                                        >
-                                            <path
-                                                d="M7 17L17 7M9 7H17V15"
-                                                stroke="currentColor"
-                                                strokeWidth="1.5"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                            />
-                                        </svg>
-                                    </span>
-                                </div>
-
-                                <div className="mt-4 flex items-center justify-between gap-4">
-                                    <p className="text-[10px] uppercase tracking-[0.18em] text-[#F5F3EE]/40">
-                                        Gym planning · Equipment placement
-                                    </p>
-
-                                    <span className="h-px flex-1 bg-[#F5F3EE]/10" />
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* ================= INSIGHTS ================= */}
-                        <InsightsList points={INSIGHTS} />
-                    </div>
-
-                    {/* ================= BOTTOM MARKER ================= */}
-                    <div className="mt-10 flex items-center gap-4">
-                        <span className="font-mono text-[8px] uppercase tracking-[0.22em] text-[#F5F3EE]/20">
-                            Design Diaries / Approach
-                        </span>
-
-                        <span className="h-px flex-1 bg-[#F5F3EE]/[0.06]" />
-
-                        <span className="font-mono text-[8px] tracking-[0.18em] text-[#E0C15A]/50">
-                            01 — 03
-                        </span>
-                    </div>
-                </div>
-            </section>
+            <TestimonialsSection />
 
         </main>
     );
